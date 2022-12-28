@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        {{ base_assets()|raw }}
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <meta name="theme-color" content="#317EFB"/>
+
+        <link href="assets/adminwys/img/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+        {# Título #}
+        <title>{{ config['build']['name'] }}</title>
+        <link rel="stylesheet" href="assets/framework/main.min.css" />
+        <!-- Font Awesome Icons -->
+        <link rel="stylesheet" href="assets/vendor/plugins/fontawesome-free/css/all.min.css">
+        <!-- IonIcons -->
+        <link rel="stylesheet" href="assets/vendor/plugins/ionicons/ionicons.min.css">
+
+        <!-- Google Font: Source Sans Pro -->
+        {# <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,400i,700" rel="stylesheet"> #}
+        {# <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700;1,900&display=swap" rel="stylesheet"> #}
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&display=swap" rel="stylesheet">
+
+        <!-- SweetAlert2 -->
+        <link rel="stylesheet" href="assets/vendor/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+        <!-- Toastr -->
+        <link rel="stylesheet" href="assets/vendor/plugins/toastr/toastr.min.css">
+         <!-- Pace style -->
+        <link rel="stylesheet" href="assets/vendor/plugins/pace-progress/themes/blue/pace-theme-loading-bar.css">
+        <!-- Theme style -->
+        <link rel="stylesheet" href="assets/vendor/dist/css/adminlte.min.css">
+        <!-- Alertas -->
+        <link rel="stylesheet" href="assets/vendor/plugins/jquery-confirm/jquery-confirm.min.css">
+        {% block appStylos %}
+        {% endblock %}
+    </head>
+
+    <body class="hold-transition sidebar-mini sidebar-collapse layout-navbar-fixed accent-danger">
+        <div class="wrapper"  id="adminwys">
+            <div style="display: none;" id="cargador" align="center">
+                <br>
+                <label style="color:#FFF; background-color:#ABB6BA; text-align:center">&nbsp;&nbsp;&nbsp;Espere... &nbsp;&nbsp;&nbsp;</label>
+
+                <img src="assets/img/cargando.gif" align="middle" alt="cargador"> &nbsp;<label style="color:#ABB6BA">Realizando tarea solicitada ...</label>
+
+                <br>
+                <hr style="color:#003" width="30%">
+                <br>
+            </div>
+            <!-- Navbar -->
+            {% block apphead %}
+                {% include 'adminwys/header' %}
+            {% endblock %}
+            <!-- /.navbar -->
+
+            <!-- Main Sidebar Container -->
+            {% block appmenu %}
+                {% include 'adminwys/menu' %}
+            {% endblock %}
+
+            <!-- Content Wrapper. Contains page content -->
+            <div class="content-wrapper">
+                {% block appBody %}
+
+                {% endblock %}
+            </div>
+            <!-- /.content-wrapper -->
+
+            <!-- Main Footer -->
+            {% block appFooter %}
+                {% include 'adminwys/footer' %}
+            {% endblock %}
+        </div>
+
+        {# Sólamente necesario para facilitar las peticiones AJAX del generador, puede eliminarse #}
+        <!-- // <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>  -->
+        <!-- jQuery -->
+        <script src="assets/vendor/plugins/jquery/jquery.min.js"></script>
+        <!-- Bootstrap -->
+        <script src="assets/vendor/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+        <!-- AdminLTE -->
+        <script src="assets/vendor/dist/js/adminlte.js"></script>
+
+        <!-- Toastr -->
+        <script src="assets/vendor/plugins/toastr/toastr.min.js"></script>
+        <!-- SweetAlert2 -->
+        <script src="assets/vendor/plugins/sweetalert2/sweetalert2.min.js"></script>
+
+        <!-- PACE -->
+        <script src="assets/vendor/plugins/pace-progress/pace.min.js"></script>
+
+        <script src="assets/vendor/plugins/jquery-confirm/jquery-confirm.min.js"></script>
+
+        <!--Moments-->
+        <script src="assets/vendor/plugins/moment/moment-with-locales.min.js"></script>
+        <!--accounting-->
+        <script src="assets/vendor/plugins/accounting/accounting.min.js"></script>
+
+        {# Formato de Pantalla #}
+        <script>
+            var width = $(document).width();
+            if(width > 770){
+                $('body').addClass('sidebar-collapse');
+            }
+            $(window).resize(function(){
+                if(width <= 770){
+                    $('body').removeClass('sidebar-collapse');
+                }
+            })
+    
+            $(document).ajaxStart(function() { Pace.restart(); });
+
+             window.paceOptions = {
+                // Only show the progress on regular and ajax-y page navigation,
+                // not every request
+                restartOnRequestAfter: 5,
+
+                ajax: {
+                    trackMethods: ['GET', 'POST', 'PUT', 'DELETE', 'REMOVE'],
+                    trackWebSockets: true,
+                    ignoreURLs: []
+                }
+            };
+
+            moment.locale('es-us');
+
+            accounting.settings.number.decimal = ",";
+            accounting.settings.number.thousand = ".";
+        </script>
+
+        {% if config['build']['production'] %}
+            <script src="assets/jscontrollers/functions.min.js?{{ date()|date('U') }}"></script>
+        {% else %}
+            <script src="assets/jscontrollers/functions.js?{{ date()|date('U') }}"></script>
+        {% endif %}
+
+        {% if config['build']['production'] %}
+            <script src="assets/vendor/vue/vue.min.js"></script>
+            <script src="assets/vendor/vue/vuex.min.js"></script>
+        {% else %}
+            <script src="assets/vendor/vue/vue.js"></script>
+            <script src="assets/vendor/vue/vuex.js"></script>
+            <script type="modele" src="assets/vendor/vue/vuex_logger.1.0.1.js"></script>
+        {% endif %}
+        <script src="assets/vendor/vue/vue.filter.js"></script>
+        <script>
+            {% if config['build']['production'] %}
+                Vue.config.devtools = false;
+                Vue.config.debug = false;
+                Vue.config.silent = true;
+                const mode_build = false;
+            {% else %}
+                Vue.config.devtools = true;
+                Vue.config.debug = true;
+                Vue.config.silent = false;
+                const mode_build = true;
+            {% endif %}
+
+        </script>
+
+        <script>
+            const owner_user = JSON.parse('{{ owner_user | json_encode | raw }}');
+        </script>
+
+        {# Scripts globales #}
+        {% block appScript %}
+        {% endblock %}
+    </body>
+</html>

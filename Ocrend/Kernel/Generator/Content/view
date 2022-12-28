@@ -1,0 +1,4 @@
+{% extends 'overall/layout' %}
+{% block appBody %}
+    Hola mundo
+{% endblock %}

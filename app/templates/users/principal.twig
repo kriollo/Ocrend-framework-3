@@ -1,0 +1,124 @@
+{% extends 'adminwys/layout' %}
+{% block appBody %}
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1 class="m-0 text-dark">Principa Usuarios</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item active">Principa Usuarios</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /.content-header -->
+
+    <!-- Main content -->
+    <div class="content">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-md-3 col-2">
+                    <div class="small-box bg-info">
+                        <div class="inner">
+                            <h3>{{ q_users }}</h3>
+                            <p>Usuarios</p>
+                        </div>
+                        <div class="icon">
+                            <i class="fa fa-user"></i>
+                        </div>
+                        <a href="users/usuarios" class="small-box-footer" title="Ver Usuarios" data-toggle="tooltip"><i class="fa fa-eye"></i></a>
+                    </div>
+                </div><!-- ./col -->
+                <div class="col-md-3 col-2">
+                    <div class="small-box bg-success">
+                        <div class="inner">
+                        <h3>{{ q_perfiles }}</h3>
+                        <p>Perfiles</p>
+                        </div>
+                        <div class="icon">
+                        <i class="fa fa-pencil-square-o"></i>
+                        </div>
+                        <a href="users/perfiles" class="small-box-footer" title="Ver Perfiles" data-toggle="tooltip"><i class="fa fa-eye"></i></a>
+                    </div>
+                </div><!-- ./col -->
+                <div class="col-md-3 col-4">
+                    <div class="small-box bg-warning">
+                        <div class="inner">
+                        <h3>Agregar</h3>
+                        <p>Nuevo Usuario</p>
+                        </div>
+                        <div class="icon">
+                        <i class="fa fa-plus"></i>
+                        </div>
+                        <a href="users/register_user" class="small-box-footer" title="Agregar" data-toggle="tooltip"><i class="fa fa-plus"></i></a>
+                    </div>
+                </div><!-- ./col -->
+                <div class="col-md-3 col-4">
+                    <div class="small-box bg-purple">
+                        <div class="inner">
+                        <h3>{{ q_users_online }}</h3>
+                        <p>Usuario On-line</p>
+                        </div>
+                        <div class="icon">
+                        <i class="fa fa-eye"></i>
+                        </div>
+                        <a href="users/principal" class="small-box-footer" title="" data-toggle="tooltip"><i class="fa fa-arrow-down"></i></a>
+                    </div>
+                </div><!-- ./col -->
+            </div>
+            <div class="row mb-2">
+                <div class="col-md-6">
+                    <p><strong>Últimos Usuarios Registrados</strong></p>
+                    <table class="table table-borderless table-responsive-md">
+                        <thead>
+                            <th>No</th>
+                            <th>Nombre</th>
+                            <th>E-Mail</th>
+                            <th>perfil</th>
+                        </thead>
+                        <tbody>
+                            {% set No = 1 %}
+                            {% for d in last_user if false != last_user %}
+                                <tr>
+                                <td>{{ No }}</td>
+                                <td>{{ d.name|raw|title }}</td>
+                                <td>{{ d.email }}</td>
+                                <td>{{ d.perfil }}</td>
+                                </tr>
+                                {% set No =  No + 1 %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Usuarios On-line</strong></p>
+                    <table class="table table-borderless table-responsive-md">
+                        <thead>
+                            <th>No</th>
+                            <th>Nombre</th>
+                            <th>E-Mail</th>
+                            <th>perfil</th>
+                        </thead>
+                        <tbody>
+                            {% set No = 1 %}
+                            {% for d in db_user_online if false != db_user_online %}
+                            <tr>
+                                <td>{{ No }}</td>
+                                <td>{{ d.name|raw|title }}</td>
+                                <td>{{ d.email }}</td>
+                                <td>{{ d.perfil }}</td>
+                            </tr>
+                            {% set No =  No + 1 %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    <!-- /.container-fluid -->
+    </div>
+{% endblock %}

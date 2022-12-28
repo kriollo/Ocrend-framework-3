@@ -1,0 +1,95 @@
+{% extends 'adminwys/layout' %}
+{% block appBody %}
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h3 class="m-0 text-dark">Maestro de Usuarios</h3>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item"><a href="users">Principal</a></li>
+                    <li class="breadcrumb-item"><a href="users/usuarios">Listar Usuarios</a></li>
+                    <li class="breadcrumb-item active">Maestro de Usuarios</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="content">
+        <div class="container-fluid">
+            {% if id_user == "" %}
+            <div class="card card-success">
+                <div class="card-header">
+                    <h3 class="card-title">Registrar Usuario</h3>
+                </div>
+            {% else %}
+            <div class="card card-info">
+                <div class="card-header">
+                    <h3 class="card-title">Actualizar Usuario</h3>
+                </div>
+            {% endif %}
+            
+                <form id="register_user_form"  action="" method="POST">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4 offset-md-4">
+                                <input id="id_user" type="hidden" value='{{ id_user }}'>
+                                <div class="form-group">
+                                    <input class="form-control" name="name"        id="name"        type="text"     placeholder="Nombre Completo" required v-bind:value="name" />
+                                    {% if id_user == "" %}
+                                        <input class="form-control" name="email"       id="email"       type="email"    placeholder="E-Mail" required v-bind:value="email" />
+                                    {% else %}
+                                        <input class="form-control" name="email"       id="email"       type="email"    placeholder="E-Mail" required v-bind:value="email" disabled/>
+                                    {% endif %}
+
+                                </div>
+                                {% if id_user == "" %}
+                                    <div class="form-group">
+                                        <input class="form-control" name="pass"        id="pass"        type="password" placeholder="Password" required autocomplete="new-password"/>
+                                        <input class="form-control" name="pass_repeat" id="pass_repeat" type="password" placeholder="Repita Password" required autocomplete="new-password"/>
+                                    </div>
+                                {% endif %}
+                                <div class="form-group">Perfil Asignado
+                                    <select name='perfil' id='perfil' class='form-control' v-bind:value="perfil" >
+                                        <option v-for="option in array_perfiles" v-bind:value="option.value">
+                                            ${ option.text }
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="form-group">Pagina de Inicio
+                                    <select name='pagina_inicio' id='pagina_inicio' class='form-control' v-bind:value="pagina_inicio" >
+                                        <option value='portal'>HOME</option>
+                                        {% for m in menu_user if false != menu_user %}
+                                            <option value='{{ m.url }}'>{{ m.url }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="rol" id="rol" v-bind:checked="rol">
+                                    <label class="form-check-label">Usuario Administrador?</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                  <!-- /.card-body -->
+  
+                    <div class="card-footer text-center">
+                        {% if id_user == "" %}
+                            <button type="button" id="register" class="btn btn-default" @click="registeruser">Registrar</button>
+                            <button type="reset" id="limpiar" class="btn btn-default">Limpiar</button>
+                        {% else %}
+                            <button type="button" id="register" class="btn btn-default" @click="updateuser">Actualizar</button>
+                        {% endif %}
+                        
+                    </div>
+                </form>
+            </div>
+        </div>    
+    </div>
+{% endblock %}
+{% block appScript %}
+    <script src="assets/jscontrollers/users/users.js"></script>
+{% endblock %}

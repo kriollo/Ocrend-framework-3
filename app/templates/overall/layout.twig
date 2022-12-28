@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {# Formato #}
+    {{ base_assets()|raw }}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <link href="assets/adminwys/img/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+
+    {# Estilo definido por defecto para presentar el framework #}
+    {# No es necesaria la existencia de este archivo, puede ser borrado #}
+    <link rel="stylesheet" href="assets/framework/main.min.css" />
+
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="assets/vendor/plugins/fontawesome-free/css/all.min.css">
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="assets/vendor/plugins/ionicons/ionicons.min.css">
+    <!-- icheck bootstrap -->
+    <link rel="stylesheet" href="assets/vendor/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="assets/vendor/dist/css/adminlte.min.css">
+    <!-- Google Font: Source Sans Pro -->
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+
+    <!-- Alertas -->
+    <link rel="stylesheet" href="assets/vendor/plugins/jquery-confirm/jquery-confirm.min.css">
+
+    {% block appHeader %}
+    {% endblock %}
+
+    <title>{{ config.build.name }}</title>
+</head>
+<body class="hold-transition login-page">
+    <img alt="" id="backgroundimage" src="assets/adminwys/img/bluegreenLights.jpg">
+
+    {% block appBody %}
+    {% endblock %}
+
+    <div class="login-logo">
+        <div class="row">
+            <div class="text-center"><img class="img-responsive" src="assets/adminwys/img/logo.png" alt="Logo"></div>
+        </div>
+    </div>
+    
+
+    <div style="display: none;" id="cargador" align="center">
+        <br>
+        <label style="color:#FFF; background-color:#ABB6BA; text-align:center">&nbsp;&nbsp;&nbsp;Espere... &nbsp;&nbsp;&nbsp;</label>
+
+        <img src="assets/adminwys/img/cargando.gif" align="middle" alt="cargador"> &nbsp;<label style="color:#ABB6BA">Realizando tarea solicitada ...</label>
+
+        <br>
+        <hr style="color:#003" width="30%">
+        <br>
+    </div>
+
+    {# Sólamente necesario para facilitar las peticiones AJAX del generador, puede eliminarse #}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> 
+
+    <!-- jquery -->
+    <!-- // <script src="assets/vendor/plugins/jquery/jquery.min.js"></script> -->
+    <script src="assets/vendor/plugins/jquery-confirm/jquery-confirm.min.js"></script>
+    
+    <!-- Bootstrap 4 -->
+    <script src="assets/vendor/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- AdminLTE App -->
+    <script src="assets/vendor/dist/js/adminlte.min.js"></script>
+
+    {% block appFooter %}
+    {% endblock %}
+</body>
+</html>

@@ -1,0 +1,79 @@
+{% if not menu_op is defined %}
+    {% set menu_op = {'id_menu':0,'id_submenu':0} %}
+{% endif %}
+{% if not menu_op.id_submenu is defined %}
+    {% set menu_op = menu_op|merge({'id_submenu':0}) %}
+{% endif %}
+<aside class="main-sidebar sidebar-dark-danger elevation-4">
+    <!-- Brand Logo -->
+    <a href="#" class="brand-link">
+        <img src="assets/adminwys/img/AdminWYSLogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
+            style="opacity: .8">
+        <span class="brand-text font-weight-light">{{ config['build']['name'] }}</span>
+    </a>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <!-- Sidebar Menu -->
+        <nav class="mt-2">
+            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview"  data-accordion="false">
+                {% set menu = "" %}
+                {% set seccion = "" %}
+                {% set cont = 0 %}
+                {% for m in menu_user if false != menu_user %}
+                    <!-- Valir si existe el item id_submenu en m, si no existe, agregar el item id_submenu con valor 0 -->
+                    {% if not m.id_submenu is defined %}
+                        {% set m = m|merge({'id_submenu':0}) %}
+                    {% endif %}
+                    {% if menu != m.menu %}
+                        {% if cont >= 1 %}
+                        </ul>
+                    </li>
+                        {% endif %}
+                        {% if seccion != m.seccion %}
+                        <li class="nav-header">{{ m.seccion }}</li>
+                        {% endif %}
+                        <li {{ menu_op['id_menu'] == m.id_menu ? ' class="nav-item has-treeview menu-open"':' class="nav-item has-treeview"' }}>
+                            <a href="#" {{ menu_op['id_menu'] == m.id_menu ? 'class="nav-link active"':'class="nav-link"' }}>
+
+                            <i class="nav-icon {{" "~ m.glyphicon }}"></i>
+                            <p>
+                                {{ m.menu|raw|convert_encoding('UTF-8', 'ISO-8859-1')|upper }}
+                                <i class="right fa fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                    {% endif %}
+                            {% if m.descripcion != "" %}
+                                <li class="nav-item">
+                                    <a href="{{ m.url }}"  {{ menu_op['id_menu'] == m.id_menu and menu_op['id_submenu'] == m.id_submenu ? 'class="nav-link active"':'class="nav-link"' }} >
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>{{ m.descripcion }}</p>
+                                    </a>
+                                </li>
+                            {% endif %}
+                    {% set menu = m.menu %}
+                    {% set seccion = m.seccion %}
+                    {% set cont = cont + 1 %}
+                {% endfor %}
+                {% if cont >= 1 %}
+                        </ul>
+                    </li>
+                {% endif %}
+                <div class="user-panel d-flex">
+                </div>
+
+                <li class="nav-item">
+                    <a href="logout" class="nav-link">
+                        <i class="nav-icon fas fa-power-off"></i>
+                        <p>
+                            Cerrar sesión
+                        </p>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    <!-- /.sidebar-menu -->
+    </div>
+    <!-- /.sidebar -->
+</aside>

@@ -1,0 +1,71 @@
+# This file is part of the Ocrend Framewok 3 package.
+#
+# (c) Ocrend Software <info@ocrend.com>
+#
+# For the full copyright and license information, please view the LICENS
+# file that was distributed with this source code.
+
+# Configuración de la base de datos
+database:
+  default_driver: mysql
+  drivers:
+    mysql:
+      host: 127.0.0.1
+      user: local
+      pass: local
+      name: newproyect
+      port: default
+      socket: default
+    sqlite3:
+      file: '___ROOT___Ocrend/Kernel/Database/Drivers/Sqlite/db.sqlite3'
+
+# Configuración de servidor SMTP
+mailer:
+  active: false
+  requiere_validacion: true
+  host: mail.serverdecorreo.cl
+  user:
+  pass:
+  port: 25
+  logo: 'assets/adminwys/img/AdminWYSLogo.png'
+
+
+# Configuración de twig //no modificar!
+twig:
+  cache: false
+  compiled_dir: ./app/templates/.compiled/
+  charset: UTF-8
+  strict_variables: true
+  autoescape: html
+
+# Configuración del sitio
+build:
+  production: false
+  name: VSERV APP
+  url: http://127.0.0.1/proyectos/newproyect/
+  timezone: America/Santiago
+  version: 3.2.1
+
+# Configuración de cookies
+sessions:
+  lifetime: 21600
+  unique: KR107702023
+  user_cookie:
+    enable: true
+    key_encrypt: X8f3p@9Vde0WvKauzI8C2
+    lifetime: 21600
+
+# Configuración de la api
+api:
+  active: true
+  origin: '*'
+
+# Configuración de ruta
+router:
+  ssl: false
+  roots: newproyect
+  path: 127.0.0.1/proyectos/newproyect/
+  avatar: assets/adminwys/img/avatares/
+  tmp_pdf: ./assets/tmp
+  temp: /var/www/html/vserv/assets/tmp/
+  disco: assets/disco/

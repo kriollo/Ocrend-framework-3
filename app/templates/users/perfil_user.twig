@@ -1,0 +1,79 @@
+{% extends 'adminwys/layout' %}
+{% block appBody %}
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h4 class="m-0 text-dark"><i class="fa fa-user icon-title"></i> Perfil de Usuario</h4>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="portal">Home</a></li>
+                    <li class="breadcrumb-item active">Perfil de Usuario</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /.content-header -->
+
+    <!-- Main content -->
+    <div class="content">
+        <div class="container-fluid">
+            <div class="card ">
+                <div class="card-header">
+                    <h1 class="card-title">{{ owner_user['name'] |capitalize }}</h1>
+                </div>
+                <div class="card-body">
+                    <input type="hidden" id="id_user" value='{{ owner_user['id_user'] }}'>
+                    <div class="col col-md-12 col-12">
+                        {% if reset_pass == true %}
+                            <div class="col col-md-4 offset-4"><center>
+                                <div class="form-group">
+                                    <label class="control-label text-danger"><h3>Su contraseña ha vencido!</h3></label>
+                                    <p></p>
+                                    <label class="control-label text-danger">Debe cambiar su contraseña</label>
+                                    <p> Nueva clave: <input class="form-control" type="password" id = "pass_new"></p>
+                                    <p> Volver a Ingresar: <input class="form-control" type="password" id = "repass_new"></p>
+                                    <p><button type="button" class="btn btn-block btn-success col-md-6" onclick="resetpass();">Modificar</button></p>
+                                </div></center>
+                            </div>
+                        {% else %}
+                            <div class="row">
+                                <div class="col col-md-4">
+                                    <div class="btn btn-default btn-file">
+                                        {% if owner_user['foto'] == 1 %}
+                                            <img class="user-image" src="assets/adminwys/img/avatares/{{ owner_user['name_foto'] }}" style="width:70%">
+                                        {% else %}
+                                            <img class="user-image" src="{{ get_gravatar(owner_user['email']) }}">
+                                        {% endif %}
+                                        <i class="fas fa-edit"></i>
+                                        <input type="file" id="file_avatar" onchange="updateAvatar();">
+                                    </div>
+                                </div>
+                                <div class="col col-md-4">
+                                    <p><b>Email: {{ owner_user['email'] }}</b></p>
+                                    <p><b>Rol de acceso: {{ owner_user['rol'] ? "Admin":"Usuario" }}</b></p>
+                                    <p><b>Perfil Asignado: {{ owner_user['perfil'] }} </b></p>
+                                    <p><b>Pagina de Inicio: {{ owner_user['pagina_inicio'] }}</b>
+                                </div>
+                                <div class="col col-md-4 border-left">
+                                    <div class="form-group">
+                                        <label class="control-label">Reset Password</label>
+                                        <p> Nueva clave: <input class="form-control" type="password" id = "pass_new"></p>
+                                        <p> Volver a Ingresar: <input class="form-control" type="password" id = "repass_new"></p>
+                                        <p><button type="button" class="btn btn-block btn-success" onclick="resetpass();">Modificar</button></p>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    <!-- /.container-fluid -->
+    </div>
+{% endblock %}
+{% block appScript %}
+    <script src="assets/jscontrollers/users/perfil_user.js"></script>
+{% endblock %}

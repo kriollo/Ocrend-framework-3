@@ -1,0 +1,88 @@
+{% extends 'adminwys/layout' %}
+{% block appBody %}
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h3 class="m-0 text-dark">Editar perfil de Usuario</h3>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item"><a href="users">Principal</a></li>
+                    <li class="breadcrumb-item"><a href="users/usuarios">Listar Usuarios</a></li>
+                    <li class="breadcrumb-item active">Editar perfil de Usuarios</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /.content-header -->
+
+    <!-- Main content -->
+    <div class="content">
+        <div class="container-fluid">
+            <div class="card card-success">
+                <div class="card-header">
+                    <h3 class="card-title"></h3>
+                </div>
+                <div class="card-body">
+                    <div class="col-md-4 offset-md-4">
+                        <form id="form_user_perfil" name="form_user_perfil" role="form" method="POST" enctype="multipart/form-data">
+
+                            <button type="button" id='update_perfil_user' class="btn btn-sm btn-success"><i class="glyphicon glyphicon-refresh"></i> Actualizar datos</button>
+                            <p>
+                            <input type='hidden' name='id_user' id='id_user' value='{{ db_users.id_user }}'>
+                            {% set id = 0 %}
+                            {% set cont = 0 %}
+                            <ul class="nav nav-pills nav-sidebar flex-column">
+                                {% for m in db_all_menu if false != db_all_menu %}
+
+                                    {% if id != m.id_menu %}
+                                        {% if cont >= 1 %}
+                                        </ul>
+                                    </li>
+                                        {% endif %}
+
+                                    <li class="nav-item has-treeview">
+                                        <i class='{{ m.glyphicon }} nav-icon'></i>
+                                            <label>
+                                                <span>
+                                                    {{ m.menu|raw|convert_encoding('UTF-8', 'ISO-8859-1')|upper }}
+                                                </span>
+                                            </label>
+                                        <ul>
+                                    {% endif %}
+                                    <li class="nav-item">
+                                        <div class="form-check">
+                                            {% if m.descripcion != ""  %}
+                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                {% set flat = 0 %}
+                                                {% for mu in db_menu_user if false != db_menu_user %}
+                                                {% if m.id_menu == mu.id_menu and m.id_submenu == mu.id_submenu %}
+                                                    {% set flat = 1 %}
+                                                    <input class="form-check-input" name="{{ '%s%s%s%s%s'|format('check','-',m.id_menu,'-',m.id_submenu) }}" type="checkbox" id="{{ '%s%s%s%s%s'|format('check','-',m.id_menu,'-',m.id_submenu) }}" checked='checked'>
+                                                {% endif %}
+                                                {% endfor %}
+                                                {% if flat == 0 %}
+                                                    <input class="form-check-input" name="{{ '%s%s%s%s%s'|format('check','-',m.id_menu,'-',m.id_submenu) }}" type="checkbox" id="{{ '%s%s%s%s%s'|format('check','-',m.id_menu,'-',m.id_submenu) }}">
+                                                {% endif %}
+                                                <label class="form-check-label">{{ m.descripcion|raw|convert_encoding('UTF-8', 'ISO-8859-1')|upper }}</label>
+                                            {% endif %}
+                                        </div>
+                                    </li>
+
+                                    {% set id=m.id_menu %}
+                                    {% set cont =  cont + 1 %}
+                                {% endfor %}
+                            </ul>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block appScript %}
+    <script src="assets/jscontrollers/users/update_perfil_user.js"></script>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends 'overall/layout' %}
+{% block appBody %}
+<div class="login-box">
+    
+    <div class="card">
+      <div class="card-body login-card-body">
+        <div class="login-logo">
+          <div class="login-logo">
+            <img class="img-responsive" src="assets/adminwys/img/AdminWYSLogo.png" alt="Logo">
+          </div>
+          <b>Admin</b>WYS
+        </div>
+  
+        <form id="lostpass_form" method="POST" >
+          <div class="input-group mb-3">
+            <input class="form-control" placeholder="Email" name="email" type="email" autofocus>
+            <div class="input-group-append">
+                <div class="input-group-text">
+                    <span class="fas fa-envelope"></span>
+                </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12">
+              <button type="button" class="btn btn-primary btn-block" id="recover_pass">Recuperar Nueva Contraseña</button>
+            </div>
+            <!-- /.col -->
+          </div>
+        </form>
+        
+        <div id="cargando"></div>
+        <p class="mt-3 mb-1">
+          <a href="home">Login</a>
+        </p>
+      </div>
+      <!-- /.login-card-body -->
+    </div>
+  </div>
+{% endblock %}
+{% block appFooter %}
+    <script src="assets/adminwys/js/home/home.js"></script>
+{% endblock %}

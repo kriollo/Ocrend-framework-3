@@ -1,0 +1,17 @@
+{
+    "require": {
+        "twig/twig": "^2.0",
+        "symfony/yaml": "^3.3",
+        "symfony/http-foundation": "^3.3",
+        "silex/silex": "~2.0",
+        "symfony/debug": "^3.3",
+        "symfony/var-dumper": "^3.3",
+        "swiftmailer/swiftmailer": "^6.0",
+        "symfony/console": "^3.3",
+        "phpoffice/phpspreadsheet": "^1.13",
+        "mpdf/mpdf": "^8.0"
+    },
+    "require-dev": {
+        "kint-php/kint": "^3.3"
+    }
+}

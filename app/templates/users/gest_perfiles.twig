@@ -1,0 +1,97 @@
+{% extends 'adminwys/layout' %}
+{% block appBody %}
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h3 class="m-0 text-dark">Gestión de Perfiles</h3>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="portal">Home</a></li>
+                    <li class="breadcrumb-item"><a href="users">Principal</a></li>
+                    <li class="breadcrumb-item active">Gestión de Perfiles</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /.content-header -->
+
+    <!-- Main content -->
+    <div class="content">
+        <div class="container-fluid">
+            <div class="card ">
+                <div class="card-header">
+                    <h3 class="card-title"></h3>
+                    <label>
+                        <select name='select_perfil' id='select_perfil' onchange='mostar_datos_perfil();'>
+                            <option>--</option>
+                            {% for p in db_perfiles if false != db_perfiles %}
+                                <option value='{{ p.nombre }}'>{{ p.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                    </label>
+                    <label>
+                        <input type='button' name='Submit' value='Consultar' id='submit' class="btn btn-sm btn-success" onclick="mostar_datos_perfil(); return false"/>
+                    </label>
+                    <label>
+                        <input type='button' name='nuevoperfil' value='Nuevo perfil' id='nuevoperfil' class="btn btn-sm btn-success" data-toggle="modal" data-target="#modal_new_perfil">
+                    </label>
+                    <label>
+                        <input type='button' name='deleteperfil' value='Elimina perfil' id='deleteperfil' class="btn btn-sm btn-success">
+                    </label>
+                </div>
+                <div class="card-body">
+                    <div class="col-md-4 offset-md-4">
+                        <form id="form_gest_perfil" name="form_gest_perfil" role="form" method="POST" enctype="multipart/form-data">
+                            <input type="hidden" name="perfil" id="perfil">
+                            <button type="button" id='update_get_perfil' class="btn btn-sm btn-success"><i class="glyphicon glyphicon-refresh"></i> Actualizar datos</button>
+                            <p>
+                            {% set id = 0 %}
+                            {% set cont = 0 %}
+                            <ul class="nav nav-pills nav-sidebar flex-column">
+                                {% for m in db_all_menu if false != db_all_menu %}
+                
+                                    {% if id != m.id_menu %}
+                                        {% if cont >= 1 %}
+                                        </ul>
+                                    </li>
+                                        {% endif %}
+                                    
+                                    <li class="nav-item has-treeview">
+                                        <i class='{{ m.glyphicon }} nav-icon'></i>
+                                            <label>
+                                                <span>
+                                                    {{ m.menu|raw|convert_encoding('UTF-8', 'ISO-8859-1')|upper }}
+                                                </span>
+                                            </label>
+                                        <ul>
+                                    {% endif %}
+                                    <li class="nav-item">
+                                        <div class="form-check">
+                                            {% if m.descripcion != ""  %}
+                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                <input class="form-check-input" name="{{ '%s%s%s%s%s'|format('check','-',m.id_menu,'-',m.id_submenu) }}" type="checkbox" id="{{ '%s%s%s%s%s'|format('check','-',m.id_menu,'-',m.id_submenu) }}">
+                                                <label class="form-check-label">{{ m.descripcion|raw|convert_encoding('UTF-8', 'ISO-8859-1')|upper }}</label>
+                                            {% endif %}
+                                        </div>
+                                    </li>
+                    
+                                    {% set id = m.id_menu %}
+                                    {% set cont =  cont + 1 %}
+                                {% endfor %}
+                            </ul>
+                        </form>
+                    </div>
+                </div>
+            </div>    
+        </div>
+    <!-- /.container-fluid -->
+    </div>
+
+    {% include 'users/modal_new_perfil' %}
+{% endblock %}
+{% block appScript %}
+    <script src="assets/jscontrollers/users/gest_perfiles.js"></script>
+{% endblock %}
