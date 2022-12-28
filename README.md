@@ -1,4 +1,4 @@
-# Ocrend-Framework 3.2
+# Ocrend-Framework 3.2 + AdminLTE 3.1.0
 
 ## Introducción
 ### ¿Qué es Ocrend Framework 3.2? (compatible con PHP8)
@@ -6,6 +6,19 @@
 Es un framework sencillo y robusto, escrito en **PHP 7** que utiliza la arquitectura **MVC** y componentes de symfony como base de su aplicación en el desarrollo web, adicionalmente pretende acelerar el proceso de desarrollo con unas cuantas herramientas. La curva de aprendizaje es bastante baja, el concepto del framework es ofrecer una arquitectura de sencillo manejo, inclusive para aquellos que jamás han programado utilizando MVC.
 
 Desarrollado por [Brayan Narváez] https://github.com/prinick96 y mantenido por [Jorge Jara H.] https://github.com/kriollo
+
+## Características
+- Arquitectura MVC (Modelo, Vista, Controlador) + API REST
+- Actualmente compatible con PHP 8 + MYSQL 
+- Integra la plantilla AdminLTE 3.1.0
+- Manejo de sesiones y cookies
+- Implementa un administrado de usuario y Perfil de Acceso
+- Evita el SQL Injection
+- Evita el ingreso por URL de páginas no permitidas
+- Evita el ingreso por fuerza bruta
+- puedes usar con COMPOSER para instalar librerías adicionales
+- incluye librerias para envio de correo, creción de PDF, creación de archivos Excel.
+- Adicionalmente tiene un stack de Helpers y funciones que ayudan a acelerar el proceso de desarrollo
 
 ## Requisitos
 
@@ -70,7 +83,7 @@ router:
 
 
 # Documentación del framework
-Actualmente no existe una documentación oficial del framework, pero puedes encontrar documentación ded las versiones anteriores en el siguiente enlace: [https://youtu.be/ZFvz4cTCdjg] - Canal de Youtube de Brayan Narváez
+Actualmente no existe una documentación oficial del framework en su versión 3.2, pero puedes encontrar documentación de las versiones anteriores en el siguiente enlace: [https://app.wys.cl/ocrend_doc/] o en [https://youtu.be/ZFvz4cTCdjg] - Canal de Brayan Narváez
 
 Estamos trabajando en la documentación oficial del framework, pero mientras tanto puedes revisar el código fuente del framework para entender su funcionamiento.
 
