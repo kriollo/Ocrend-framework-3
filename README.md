@@ -60,11 +60,6 @@ mysql:
 
 # Configuración del sitio
 
-site:
-    production: Establecer en true, sólamente cuando esté en el servidor de producción
-    name: Nombre de su aplicación web
-    url: URL completa para acceder al framework, es importante el "/" del final
-
 ```yml
 build:
     production: Establecer en true, sólamente cuando esté en el servidor de producción
