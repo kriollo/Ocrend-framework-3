@@ -13,7 +13,7 @@ database:
       host: 127.0.0.1
       user: local
       pass: local
-      name: newproyect
+      name: prueba
       port: default
       socket: default
     sqlite3:
@@ -68,4 +68,3 @@ router:
   avatar: assets/adminwys/img/avatares/
   tmp_pdf: ./assets/tmp
   temp: /var/www/html/vserv/assets/tmp/
-  disco: assets/disco/

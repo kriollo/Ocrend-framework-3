@@ -51,7 +51,7 @@
                 {% if owner_user['foto'] == 1 %}
                     <img src="assets/adminwys/img/avatares/{{ owner_user['name_foto'] }}" class="user-image" alt="User Image">
                 {% else %}
-                    <img src="assets/adminwys/img/vserv_logo.png" class="user-image" alt="User Image">
+                    <img class="user-image" src="{{ get_gravatar(owner_user['email']) }}" alt="User Image">
                 {% endif %}
                 <span class="hidden-xs">{{ owner_user['name']|title  }}</span>
             </a>

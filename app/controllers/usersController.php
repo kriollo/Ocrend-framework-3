@@ -45,7 +45,7 @@ class usersController extends Controllers implements IControllers {
             case 'usuarios':
                 $this->template->display('users/listar_users', [
                     'menu_op' => $op,
-                    'db_users' => $u->getUsersAll()
+                    'db_users' => $u->getUsers()
                 ]);
             break;
             case 'register_user': 

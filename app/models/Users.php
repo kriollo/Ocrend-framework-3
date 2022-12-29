@@ -234,13 +234,19 @@ class Users extends Models implements IModels {
     public function getUserById(int $id, string $select = '*') {
         return $this->db->select($select,'users',null,"id_user='$id'",1);
     }
+
+    /**
+     * Obtiene datos de un usuario según su id en la base de datos por medio de una llamada POST
+     *
+     * @return false|array con información del usuario
+     */
     public function getUserByIdPOST() {
         global $http;
         $id_user = $http->request->get('id_user');
         $result = $this->getUserById($id_user);
-
-        return $result[0];
+        return $result === false ? false : $result[0];
     }
+
     /**
      * Obtiene a todos los usuarios
      *    
@@ -623,8 +629,6 @@ class Users extends Models implements IModels {
             # Veriricar contraseñas
             $this->checkPassMatch($pass, $pass_repeat);
 
-
-
             $pass = Helper\Strings::hash($pass);
 
             # Actualiza contraseña
@@ -637,32 +641,30 @@ class Users extends Models implements IModels {
             return ['success' => 0, 'title' => 'Reset Password Usuario', 'message' => $e->getMessage()];
         }
     }
-    public function getUsersAll() {
-        return $this->db->query_select("Select * from users");
-    }
+
+    /**
+     * Obtiene el menu asignado al usuario, pero si su rol es administrador, obtiene todos los menus
+     * @return array
+     */
     public function getMenuOwnerUser() {
-        $usuario = $this->getOwnerUser();
-        if ( $usuario['rol'] == 1 )
-            $result = (new Model\Adminwys)->getAllMenu();
-        else
-            $result = (new Model\Adminwys)->getMenuUser($usuario['id_user']);
-        return $result;
+        $user = $this->getUserById($this->id_user,"rol");
+        return $user[0]['rol'] == 1 ? (new Model\Adminwys)->getAllMenu(): (new Model\Adminwys)->getMenuUser($this->id_user);
     }
 
     /**
-     * Obtiene los datos del usuario
+     * Actualiza el estado de conexión del usuario, seteando la fecha de conexión
      * @return void
      */
     public function update_online_user($opcion) {
         $ahora = time();
         $limite = $ahora-24*60;
-        $this->db->query("UPDATE users SET online_fecha=0 WHERE online_fecha < ".$limite);
+        $this->db->query("UPDATE users SET online_fecha=0 WHERE online_fecha < $limite;");
 
         if ($opcion === 'in')
-            $this->db->query("UPDATE users SET online_fecha=".$ahora." WHERE id_user = '$this->id_user' LIMIT 1;");
+            $this->db->query("UPDATE users SET online_fecha = $ahora WHERE id_user = $this->id_user LIMIT 1;");
 
-         if ($opcion === 'out') 
-            $this->db->query("UPDATE users SET online_fecha=0 WHERE id_user = '$this->id_user' LIMIT 1;");
+         if ($opcion === 'out')
+            $this->db->query("UPDATE users SET online_fecha=0 WHERE id_user = $this->id_user LIMIT 1;");
     }
 
     /**
@@ -670,11 +672,8 @@ class Users extends Models implements IModels {
      * @return bool
      */
     public function validar_cambio_pass() {
-        $result =  $this->db->query_select('SELECT fecha_pass from users where id_user="'.$this->id_user.'" and  fecha_pass<=date(now())');
-        if (false !== $result)
-            return true;
-        else
-            return false;
+        $result = $this->db->query_select('SELECT fecha_pass from users where id_user="'.$this->id_user.'" and  fecha_pass<=date(now())');
+        return  false !== $result;
     }
 
     public function __construct(IRouter $router = null) {
