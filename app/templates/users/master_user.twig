@@ -1,4 +1,7 @@
 {% extends 'adminwys/layout' %}
+{% block appStylos %}
+    <link rel="stylesheet" href="assets/vendor/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
+{% endblock %}
 {% block appBody %}
     <div class="content-header">
         <div class="container-fluid">
@@ -31,7 +34,7 @@
                     <h3 class="card-title">Actualizar Usuario</h3>
                 </div>
             {% endif %}
-            
+
                 <form id="register_user_form"  action="" method="POST">
                     <div class="card-body">
                         <div class="row">
@@ -53,7 +56,7 @@
                                     </div>
                                 {% endif %}
                                 <div class="form-group">Perfil Asignado
-                                    <select name='perfil' id='perfil' class='form-control' v-bind:value="perfil" >
+                                    <select name='perfil' id='perfil' class='form-control' v-model="perfil" >
                                         <option v-for="option in array_perfiles" v-bind:value="option.value">
                                             ${ option.text }
                                         </option>
@@ -67,15 +70,16 @@
                                         {% endfor %}
                                     </select>
                                 </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="rol" id="rol" v-bind:checked="rol">
-                                    <label class="form-check-label">Usuario Administrador?</label>
+                                <div class="icheck-warning">
+                                    <input type="checkbox" id="rol" name="rol" v-model:checked="rol">
+                                    <label for="rol">
+                                        Asignar Rol Administrador
+                                    </label>
                                 </div>
                             </div>
                         </div>
                     </div>
                   <!-- /.card-body -->
-  
                     <div class="card-footer text-center">
                         {% if id_user == "" %}
                             <button type="button" id="register" class="btn btn-default" @click="registeruser">Registrar</button>
@@ -83,13 +87,17 @@
                         {% else %}
                             <button type="button" id="register" class="btn btn-default" @click="updateuser">Actualizar</button>
                         {% endif %}
-                        
                     </div>
                 </form>
             </div>
-        </div>    
+        </div>
     </div>
 {% endblock %}
 {% block appScript %}
-    <script src="assets/jscontrollers/users/users.js"></script>
+    {% if config['build']['production'] %}
+        <script type="module" src="assets/jscontrollers/users/users.min.js?{{ date()|date('U') }}"></script>
+    {% else %}
+        <script type="module" src="assets/jscontrollers/users/users.js?{{ date()|date('U') }}"></script>
+    {% endif %}
+    
 {% endblock %}

@@ -102,7 +102,7 @@ var app = new Vue({
                                 body: json.message,
                                 autohide: true,
                                 delay: 5000
-                            })
+                            });
                             setTimeout(function(){
                                 location.href = "users/usuarios";
                             },1000);
@@ -114,7 +114,7 @@ var app = new Vue({
                                 body: json.message,
                                 autohide: true,
                                 delay: 5000
-                            })
+                            });
                         }
                     },
                     error : function(xhr, status) {
@@ -125,7 +125,7 @@ var app = new Vue({
                             body: xhr.responseText,
                             autohide: true,
                             delay: 5000
-                        })
+                        });
                     },
                     complete: function(){
                         $ocrendForm.data('locked', false);
@@ -166,7 +166,7 @@ var app = new Vue({
                                 body: json.message,
                                 autohide: true,
                                 delay: 5000
-                            })
+                            });
                             setTimeout(function(){
                                 location.href = "users/usuarios";
                             },1000);
@@ -178,7 +178,7 @@ var app = new Vue({
                                 body: json.message,
                                 autohide: true,
                                 delay: 5000
-                            })
+                            });
                         }
                     },
                     error : function(xhr, status) {
@@ -189,7 +189,7 @@ var app = new Vue({
                             body: xhr.responseText,
                             autohide: true,
                             delay: 5000
-                        })
+                        });
                     },
                     complete: function(){
                         $ocrendForm.data('locked', false);
