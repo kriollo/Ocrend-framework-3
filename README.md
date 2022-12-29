@@ -35,8 +35,13 @@ Es muy simple instalar Ocrend Framework, solo debes seguir los siguientes pasos:
 el repositorio de github es el siguiente: [https://github.com/kriollo/Ocrend-framework-3.2]
 puedes descargarlo en formato zip o clonarlo con git.
 
-1. Para clonar el repositorio en tu servidor web utiliza el siguiente comando:
-    - git clone https://github.com/kriollo/Ocrend-framework-3.2
+1. Para clonar el repositorio en tu servidor haz lo siguiente:
+   - Crea una un directorio con el nombre del proyecto en la carpeta htdocs de apache (si trabajar con windows)
+   - Abre una terminal desde la carpeta creada, con windows puedes escribir en la barra de direcciones **cmd** y presionar [enter]
+   - Ingresa este comando en la terminal:
+    ~~~
+    git clone https://github.com/kriollo/Ocrend-framework-3.2 .
+    ~~~
 
 2. Una vez clonado el repositorio, debes configurar el archivo **Ocrend.ini.yml** que se encuentra en la carpeta **./Ocrend/Kernel/Config/** . En este archivo se encuentran las configuraciones básicas del framework, como el nombre de la aplicación, el nombre de la base de datos, el usuario y la contraseña de la base de datos, entre otras cosas.
 
