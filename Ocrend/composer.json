@@ -1,15 +1,15 @@
 {
     "require": {
-        "twig/twig": "^2.0",
-        "symfony/yaml": "^3.3",
-        "symfony/http-foundation": "^3.3",
-        "silex/silex": "~2.0",
-        "symfony/debug": "^3.3",
-        "symfony/var-dumper": "^3.3",
-        "swiftmailer/swiftmailer": "^6.0",
-        "symfony/console": "^3.3",
-        "phpoffice/phpspreadsheet": "^1.13",
-        "mpdf/mpdf": "^8.0"
+        "twig/twig": "^2.15.4",
+        "symfony/yaml": "^3.4.17",
+        "symfony/http-foundation": "^3.4.47",
+        "silex/silex": "~2.2.4",
+        "symfony/debug": "^3.4.47",
+        "symfony/var-dumper": "^3.4.47",
+        "swiftmailer/swiftmailer": "^6.3",
+        "symfony/console": "^3.4.47",
+        "phpoffice/phpspreadsheet": "^1.26",
+        "mpdf/mpdf": "^8.1.4"
     },
     "require-dev": {
         "kint-php/kint": "^3.3"
