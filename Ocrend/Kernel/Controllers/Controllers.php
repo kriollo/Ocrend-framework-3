@@ -24,20 +24,8 @@ use Ocrend\Kernel\Router\IRouter;
 
 abstract class Controllers {
 
-    /**
-      * Arreglo con los menus que tiene acceso el usuario.
-      *
-      * @var array
-    */
     protected $menu_user =[];
-
-    /**
-      * Indica si el usuario debe cambiar su contraseña por vencimiento de la misma.
-      *
-      * @var bool
-    */
-    protected $user_resetpass;
-    
+    protected $user_resetpass = [];
     /**
       * Obtiene el objeto del template
       *

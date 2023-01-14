@@ -14,7 +14,6 @@ namespace app\controllers;
 use Ocrend\Kernel\Controllers\Controllers;
 use Ocrend\Kernel\Controllers\IControllers;
 use Ocrend\Kernel\Router\IRouter;
-use  \Kint;
 
 /**
  * Controlador portal/
@@ -25,9 +24,9 @@ class portalController extends Controllers implements IControllers {
 
     public function __construct(IRouter $router) {
         parent::__construct($router,[
-            'users_logged' => true, // Solo usuarios logueados
-            'valida_pass_vencida' => false, // valida si la contraseña esta vencida
-            'auto_reload_template' => false, // permite la recarga automatica de la plantilla
+            'users_logged' => true,
+            'valida_pass_vencida' => false,
+            'auto_reload_template' => false,
         ]);
 
         switch($this->method){
