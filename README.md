@@ -19,6 +19,7 @@ Desarrollado por [Brayan Narváez] https://github.com/prinick96 y mantenido por 
 - puedes usar con COMPOSER para instalar librerías adicionales
 - incluye librerias para envio de correo, creción de PDF, creación de archivos Excel.
 - Adicionalmente tiene un stack de Helpers y funciones que ayudan a acelerar el proceso de desarrollo
+- Incluye ORM (Object Relational Mapping) para el manejo de la base de datos (RedBeanPHP)
 
 ## Requisitos
 
