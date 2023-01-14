@@ -24,7 +24,7 @@ abstract class Models {
     /**
       * Tiene siempre el id pasado por la ruta, en caso de no haber ninguno, será cero.
       *
-      * @var int 
+      * @var int
     */
     protected $id = 0;
 
@@ -38,18 +38,18 @@ abstract class Models {
     /**
       * Inicia la configuración inicial de cualquier modelo
       *
-      * @param IRouter $router: Instancia de un Router 
-      *                                    
+      * @param IRouter $router: Instancia de un Router
+      *
     */
     protected function __construct(IRouter $router = null) {
         global $session, $cookie, $config;
-        
+
         # Id captado por la ruta
         if (null != $router) {
             $this->id = $router->getId(true);
-            $this->id = null == $this->id ? 0 : $this->id; 
+            $this->id = null == $this->id ? 0 : $this->id;
         }
-        
+
         # Verificar sesión del usuario
         $session_hash = 'session_hash';
         $session_name = $cookie->get($session_hash). $config['sessions']['unique'] . '__user_id';

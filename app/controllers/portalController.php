@@ -14,6 +14,7 @@ namespace app\controllers;
 use Ocrend\Kernel\Controllers\Controllers;
 use Ocrend\Kernel\Controllers\IControllers;
 use Ocrend\Kernel\Router\IRouter;
+use app\models as Model;
 
 /**
  * Controlador portal/

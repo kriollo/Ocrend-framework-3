@@ -9,7 +9,8 @@
         "swiftmailer/swiftmailer": "^6.3",
         "symfony/console": "^3.4.47",
         "phpoffice/phpspreadsheet": "^1.26",
-        "mpdf/mpdf": "^8.1.4"
+        "mpdf/mpdf": "^8.1.4",
+        "gabordemooij/redbean": "^5.5"
     },
     "require-dev": {
         "kint-php/kint": "^3.3"

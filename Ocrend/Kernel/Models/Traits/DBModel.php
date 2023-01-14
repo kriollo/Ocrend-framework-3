@@ -24,7 +24,7 @@ trait DBModel {
     /**
      * Tiene la instancia de la base de datos actual
      *
-     * @var null|Mysql|Sqlite;
+     * @var null;
      */
     protected $db = null;
 

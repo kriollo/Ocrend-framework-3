@@ -51,6 +51,10 @@ class ComposerStaticInit8717f8bd41e2851ee8528e88990f2038
             'Symfony\\Component\\Console\\' => 26,
             'Silex\\' => 6,
         ),
+        'R' => 
+        array (
+            'RedBeanPHP\\' => 11,
+        ),
         'P' => 
         array (
             'Psr\\SimpleCache\\' => 16,
@@ -162,6 +166,10 @@ class ComposerStaticInit8717f8bd41e2851ee8528e88990f2038
         'Silex\\' => 
         array (
             0 => __DIR__ . '/..' . '/silex/silex/src/Silex',
+        ),
+        'RedBeanPHP\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/gabordemooij/redbean/RedBeanPHP',
         ),
         'Psr\\SimpleCache\\' => 
         array (

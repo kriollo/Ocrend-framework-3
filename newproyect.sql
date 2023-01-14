@@ -140,7 +140,7 @@ CREATE TABLE IF NOT EXISTS `tbladm_submenu` (
   PRIMARY KEY (`id_menu`,`id_submenu`,`PosS`) USING BTREE
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
--- Volcando datos para la tabla newproyect.tbladm_submenu: 7 rows
+-- Volcando datos para la tabla newproyect.tbladm_submenu: 3 rows
 DELETE FROM `tbladm_submenu`;
 /*!40000 ALTER TABLE `tbladm_submenu` DISABLE KEYS */;
 INSERT INTO `tbladm_submenu` (`id_menu`, `id_submenu`, `PosS`, `url`, `descripcion`, `estado`) VALUES
@@ -153,6 +153,7 @@ INSERT INTO `tbladm_submenu` (`id_menu`, `id_submenu`, `PosS`, `url`, `descripci
 DROP TABLE IF EXISTS `users`;
 CREATE TABLE IF NOT EXISTS `users` (
   `id_user` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `id` int(11) unsigned NOT NULL,
   `name` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
   `email` varchar(150) COLLATE utf8_unicode_ci NOT NULL,
   `pass` varchar(90) COLLATE utf8_unicode_ci NOT NULL,
@@ -167,16 +168,27 @@ CREATE TABLE IF NOT EXISTS `users` (
   `online_fecha` int(20) NOT NULL DEFAULT 0,
   `fecha_pass` date NOT NULL,
   `tipo_user` varchar(10) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'sistema',
-  PRIMARY KEY (`id_user`) USING BTREE,
+  PRIMARY KEY (`id_user`),
   KEY `tipo_user_rut_cliente` (`tipo_user`)
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
--- Volcando datos para la tabla newproyect.users: 1 rows
+-- Volcando datos para la tabla newproyect.users: 2 rows
 DELETE FROM `users`;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` (`id_user`, `name`, `email`, `pass`, `tmp_pass`, `token`, `perfil`, `rol`, `estado`, `foto`, `name_foto`, `pagina_inicio`, `online_fecha`, `fecha_pass`, `tipo_user`) VALUES
-	(1, 'ADMINISTRADOR', 'admin@wys.cl', '$2a$10$1b15acc9218708fe45010OXHRhxB61vvFnLu/g0dG5jBC7ywONy6u', '', '', 'DEFINIDO', 1, 1, 1, '1.jpg', 'portal', 0, '2023-02-25', 'sistema');
+INSERT INTO `users` (`id_user`, `id`, `name`, `email`, `pass`, `tmp_pass`, `token`, `perfil`, `rol`, `estado`, `foto`, `name_foto`, `pagina_inicio`, `online_fecha`, `fecha_pass`, `tipo_user`) VALUES
+	(1, 1, 'ADMINISTRADOR', 'admin@wys.cl', '$2a$10$e30f46f8a2fbb15c29c3cuyID7m5Az.6bXR8pOlPFFsbxV.LuUuk2', '', '', 'DEFINIDO', 1, 1, 1, '1.jpg', 'portal', 1673733166, '2023-03-14', 'sistema'),
+	(3, 3, 'Jorge Jara', 'newproyect@wys.cl', '$2a$10$e82628d54e7414c749a5aupGjzTmtmBGQir.wQ5xaJrXdQA0.uyx.', '', '', 'definido', 0, 1, 0, NULL, 'portal', 0, '2023-02-28', 'sistema');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
+
+-- Volcando estructura para disparador newproyect.users_before_insert
+DROP TRIGGER IF EXISTS `users_before_insert`;
+SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_ZERO_IN_DATE,NO_ZERO_DATE,NO_ENGINE_SUBSTITUTION';
+DELIMITER //
+CREATE TRIGGER `users_before_insert` BEFORE INSERT ON `users` FOR EACH ROW BEGIN
+ SET NEW.id = NEW.id_user;
+END//
+DELIMITER ;
+SET SQL_MODE=@OLDTMP_SQL_MODE;
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
