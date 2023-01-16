@@ -50,7 +50,7 @@ use app\models as Model;
         $u = new Model\Users;
         return $app->json($u->update_perfil_usuario());
     });
-       $app->post('/get_data_perfil', function() use($app) {
+    $app->post('/get_data_perfil', function() use($app) {
         $u = new Model\Adminwys();
         return $app->json($u->get_data_perfil());
     });

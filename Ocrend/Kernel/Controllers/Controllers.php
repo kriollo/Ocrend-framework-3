@@ -185,14 +185,17 @@ abstract class Controllers {
     /**
      * Valida si está logeado el usuario
      *
-     * @return void
+     * @return void|bool
      */
-    private function user_logged() {
+    public function user_logged() {
         global $config;
 
+        $url = $config['build']['url'];
+
         if ($this->controllerConfig['users_logged'] && !$this->is_logged) {
-          Helper\Functions::redir($config['build']['url']);
+          Helper\Functions::redir($url);
         }
+        return $this->is_logged;
     }
 
     /**

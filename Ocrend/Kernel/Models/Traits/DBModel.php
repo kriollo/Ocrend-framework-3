@@ -24,9 +24,8 @@ trait DBModel {
     /**
      * Tiene la instancia de la base de datos actual
      *
-     * @var null;
      */
-    protected $db = null;
+    protected $db;
 
     /**
      * Constructor inicial del modelo.

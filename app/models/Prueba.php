@@ -21,7 +21,7 @@ use Ocrend\Kernel\Router\IRouter;
 use RedBeanPHP\R;
 
 /**
- * Modelo Adminwys
+ * Modelo Prueba para conexión con RedBeanPHP
  */
 class Prueba extends Models implements IModels {
     use RedBeanModel;

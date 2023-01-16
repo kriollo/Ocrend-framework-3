@@ -11,6 +11,7 @@
 
 use app\models as Model;
 
+//ejemplo de como declarar una api rest tipo GET
 $app->get('/', function() use($app) {
     return $app->json([]);
 });
