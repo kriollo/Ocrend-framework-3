@@ -53,7 +53,8 @@ class Model extends Command {
             $choice = $io->ask('ADVERTENCIA: El modelo ' . $modelName . ' ya existe, desdea sobreescribirlo? [si][no]');
             
             if($choice != 'si') {
-                exit('Ha salido del generador.');
+                $output->writeln('Ha salido del generador');
+                return;
             }
         }
 

@@ -60,7 +60,8 @@ class View extends Command {
             $choice = $io->ask('ADVERTENCIA: La vista ' . $viewname . '.twig ya existe, desdea sobreescribirla? [si][no]');
             
             if($choice != 'si') {
-                exit('Ha salido del generador.');
+                $output->writeln('Ha salido del generador');
+                return;
             }
         }
 

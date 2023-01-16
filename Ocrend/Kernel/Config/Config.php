@@ -19,41 +19,41 @@ use Symfony\Component\Yaml\Yaml;
 use Symfony\Component\Yaml\Exception\ParseException;
 use Ocrend\Kernel\Cookies\Cookies;
 
-# Cargadores iniciales
+// Cargadores iniciales
 require ___ROOT___ . 'Ocrend/vendor/autoload.php';
 require ___ROOT___ . 'Ocrend/autoload.php';
 
-# Manejador de excepciones
+// Manejador de excepciones
 ErrorHandler::register();
 ExceptionHandler::register();  
 
-# Mínima versión, alerta
+// Mínima versión, alerta
 if (version_compare(phpversion(), '7.0.0', '<')) {
     throw new \RuntimeException('La versión actual de PHP es ' . phpversion() . ' y como mínimo se require la versión 7.0.0');
 }
 
-# Verificar usabilidad de twig
+// Verificar usabilidad de twig
 $__TWIG_CACHE_PATH = ___ROOT___ . 'app/templates/.compiled/';
 $__TWIG_READABLE_AND_WRITABLE = !is_readable($__TWIG_CACHE_PATH) || !is_writable($__TWIG_CACHE_PATH);
 if ($__TWIG_READABLE_AND_WRITABLE) {
 
-    # Intentar solucionarlo
+    // Intentar solucionarlo
     if(!is_dir($__TWIG_CACHE_PATH)) {
         mkdir($__TWIG_CACHE_PATH, 0644, true);
     } else {
         chmod($__TWIG_CACHE_PATH, 0644);
     }
 
-    # Revisar la lecutra para twig
+    // Revisar la lecutra para twig
     if($__TWIG_READABLE_AND_WRITABLE) {
         throw new \RuntimeException('Debe conceder permisos de escritura y lectura a la ruta '. $__TWIG_CACHE_PATH .' ó crearla si no existe.');
     }
 }
 
-# Obtener la data informativa
+// Obtener la data informativa
 $config = Yaml::parse(file_get_contents(___ROOT___ . 'Ocrend/Kernel/Config/Ocrend.ini.yml'));
 
-# Cargador de sesiones
+// Cargador de sesiones
 $session = new Session(new NativeSessionStorage(
     array(
       'cookie_lifetime' => $config['sessions']['lifetime']
@@ -61,12 +61,12 @@ $session = new Session(new NativeSessionStorage(
 ));
 $session->start();
 
-# Cargador de cookies
+// Cargador de cookies
 $cookie = new Cookies;
 $cookie->reviveSessions();
 
-# Peticiones HTTP
+// Peticiones HTTP
 $http = Request::createFromGlobals(); 
 
-# Define el timezone actual
+// Define el timezone actual
 date_default_timezone_set($config['build']['timezone']);
