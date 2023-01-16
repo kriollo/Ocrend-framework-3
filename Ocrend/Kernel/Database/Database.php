@@ -29,7 +29,6 @@ class Database {
      * @return Driver
      */
     public static function resolveDriver(string $motor) : Driver {
-        global $config;
 
         if($motor == 'mysql') {
             return new Mysql;
