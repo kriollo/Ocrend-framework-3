@@ -170,6 +170,57 @@ abstract class Controllers {
     }
 
     /**
+     * Valida si el usuario debe cambiar su contraseña
+     *
+     * @return void
+     */
+    private function valida_pass_vencida(){
+        global $config;
+
+        if ($this->user_resetpass != false && $this->controllerConfig['valida_pass_vencida']){
+          Helper\Functions::redir($config['build']['url']. 'portal/perfil_user');
+        }
+    }
+
+    /**
+     * Valida si está logeado el usuario
+     *
+     * @return void
+     */
+    private function user_logged() {
+        global $config;
+
+        if ($this->controllerConfig['users_logged'] && !$this->is_logged) {
+          Helper\Functions::redir($config['build']['url']);
+        }
+    }
+
+    /**
+     * Valida si no está logeado el usuario
+     *
+     * @return void
+     */
+    private function user_not_logged() {
+        global $config;
+
+        if ($this->controllerConfig['users_not_logged'] && $this->is_logged) {
+          Helper\Functions::redir();
+        }
+    }
+
+    /**
+     * Valida si el usuario es administrador
+     *
+     * @return void
+     */
+    private function acess_only_user_admin() {
+        global $config;
+
+        if ($this->controllerConfig['only_admin'] && $this->user['rol'] != 1 ){
+          Helper\Functions::redir($config['build']['url']. 'error?e=404');
+        }
+    }
+    /**
      * Acción que regula quién entra o no al controlador según la configuración
      *
      * @return void
@@ -177,35 +228,24 @@ abstract class Controllers {
     private function knowVisitorPermissions() {
         global $config;
 
-        # Sólamente usuarios logeados
-        if ($this->controllerConfig['users_logged'] && !$this->is_logged) {
-            Helper\Functions::redir($config['build']['url']);
-        }
-
-        # Sólamente usuarios no logeados
-        if ($this->controllerConfig['users_not_logged'] && $this->is_logged) {
-            Helper\Functions::redir();
-        }
-
+        $this->user_logged();
+        $this->user_not_logged();
 
         if ($this->is_logged){
-            if ($this->user_resetpass != false && $this->controllerConfig['valida_pass_vencida'] === true) {
-                Helper\Functions::redir($config['build']['url']. 'portal/perfil_user');
-            }else{
-                # acceso a opción sólo admin
-                if ($this->controllerConfig['only_admin'] && $this->user['rol'] != 1 ){
-                    Helper\Functions::redir($config['build']['url']. 'error?e=404');
-                }
-                # acceso opcion sólo si usuario tiene permiso en perfil
-                if ($this->controllerConfig['access_menu'] != false && $this->controllerConfig['access_menu']['valida_acceso']){
 
-                    $menuFound = array_filter($this->menu_user, function ($menu) {
-                        return $menu['id_menu'] === $this->controllerConfig['access_menu']['menu']['id_menu'] && $menu['id_submenu'] === $this->controllerConfig['access_menu']['menu']['id_submenu'];
-                    });
+            $this->valida_pass_vencida();
 
-                    if (is_array($menuFound) && empty($menuFound)) {
-                        Helper\Functions::redir($config['build']['url'] . 'error?e=404');
-                    }
+            $this->acess_only_user_admin();
+
+            # acceso opcion sólo si usuario tiene permiso en perfil
+            if ($this->controllerConfig['access_menu'] != false && $this->controllerConfig['access_menu']['valida_acceso']){
+
+                $menuFound = array_filter($this->menu_user, function ($menu) {
+                    return $menu['id_menu'] === $this->controllerConfig['access_menu']['menu']['id_menu'] && $menu['id_submenu'] === $this->controllerConfig['access_menu']['menu']['id_submenu'];
+                });
+
+                if (is_array($menuFound) && empty($menuFound)) {
+                    Helper\Functions::redir($config['build']['url'] . 'error?e=404');
                 }
             }
         }
