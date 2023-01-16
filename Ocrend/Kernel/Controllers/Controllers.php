@@ -174,10 +174,10 @@ abstract class Controllers {
      *
      * @return void
      */
-    private function valida_pass_vencida(){
+    private function valida_pass_vencida() {
         global $config;
 
-        if ($this->user_resetpass != false && $this->controllerConfig['valida_pass_vencida']){
+        if ($this->user_resetpass != false && $this->controllerConfig['valida_pass_vencida']) {
           Helper\Functions::redir($config['build']['url']. 'portal/perfil_user');
         }
     }
@@ -216,7 +216,7 @@ abstract class Controllers {
     private function acess_only_user_admin() {
         global $config;
 
-        if ($this->controllerConfig['only_admin'] && $this->user['rol'] != 1 ){
+        if ($this->controllerConfig['only_admin'] && $this->user['rol'] != 1 ) {
           Helper\Functions::redir($config['build']['url']. 'error?e=404');
         }
     }
@@ -231,14 +231,14 @@ abstract class Controllers {
         $this->user_logged();
         $this->user_not_logged();
 
-        if ($this->is_logged){
+        if ($this->is_logged) {
 
             $this->valida_pass_vencida();
 
             $this->acess_only_user_admin();
 
             # acceso opcion sólo si usuario tiene permiso en perfil
-            if ($this->controllerConfig['access_menu'] != false && $this->controllerConfig['access_menu']['valida_acceso']){
+            if ($this->controllerConfig['access_menu'] != false && $this->controllerConfig['access_menu']['valida_acceso']) {
 
                 $menuFound = array_filter($this->menu_user, function ($menu) {
                     return $menu['id_menu'] === $this->controllerConfig['access_menu']['menu']['id_menu'] && $menu['id_submenu'] === $this->controllerConfig['access_menu']['menu']['id_submenu'];
