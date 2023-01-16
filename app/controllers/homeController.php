@@ -30,7 +30,10 @@ class homeController extends Controllers implements IControllers {
 
         // Si el usuario está conectado, redireccionar a su página de inicio
         if ($this->user_logged()) {
-            Helper\Functions::redir($config['build']['url'] . $this->user['pagina_inicio']);
+            $helperFunction = new Helper\Functions;
+            $helperFunction->redir(
+                $config['build']['url'] . $this->user['pagina_inicio']
+            );
         }
 
         switch($this->method){

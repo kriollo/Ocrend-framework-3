@@ -178,7 +178,8 @@ abstract class Controllers {
         global $config;
 
         if ($this->user_resetpass != false && $this->controllerConfig['valida_pass_vencida']) {
-          Helper\Functions::redir($config['build']['url']. 'portal/perfil_user');
+          $helperFunction = new Helper\Functions;
+          $helperFunction->redir($config['build']['url']. 'portal/perfil_user');
         }
     }
 
@@ -193,7 +194,8 @@ abstract class Controllers {
         $url = $config['build']['url'];
 
         if ($this->controllerConfig['users_logged'] && !$this->is_logged) {
-          Helper\Functions::redir($url);
+          $helperFunction = new Helper\Functions;
+          $helperFunction->redir($url);
         }
         return $this->is_logged;
     }
@@ -206,7 +208,8 @@ abstract class Controllers {
     private function user_not_logged() {
 
         if ($this->controllerConfig['users_not_logged'] && $this->is_logged) {
-          Helper\Functions::redir();
+          $helperFunction = new Helper\Functions;
+          $helperFunction->redir();
         }
     }
 
@@ -219,7 +222,8 @@ abstract class Controllers {
         global $config;
 
         if ($this->controllerConfig['only_admin'] && $this->user['rol'] != 1 ) {
-          Helper\Functions::redir($config['build']['url']. 'error?e=404');
+          $helperFunction = new Helper\Functions;
+          $helperFunction->redir($config['build']['url']. 'error?e=404');
         }
     }
     /**
@@ -247,7 +251,8 @@ abstract class Controllers {
                 });
 
                 if (is_array($menuFound) && empty($menuFound)) {
-                    Helper\Functions::redir($config['build']['url'] . 'error?e=404');
+                  $helperFunction = new Helper\Functions;
+                  $helperFunction->redir($config['build']['url'] . 'error?e=404');
                 }
             }
         }
