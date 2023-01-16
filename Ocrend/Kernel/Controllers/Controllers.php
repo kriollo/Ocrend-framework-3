@@ -201,7 +201,6 @@ abstract class Controllers {
      * @return void
      */
     private function user_not_logged() {
-        global $config;
 
         if ($this->controllerConfig['users_not_logged'] && $this->is_logged) {
           Helper\Functions::redir();

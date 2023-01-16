@@ -28,10 +28,9 @@ class homeController extends Controllers implements IControllers {
         global $config;
         parent::__construct($router);
 
-        if (isset($this->user['id_user'])){
-            Helper\Functions::redir($config['build']['url'] . $this->user['pagina_inicio']);
-            exit();
-        }
+        // if (isset($this->user['id_user'])){
+        //     Helper\Functions::redir($config['build']['url'] . $this->user['pagina_inicio']);
+        // }
 
         switch($this->method){
             case 'forgot':
