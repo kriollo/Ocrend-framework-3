@@ -1,3 +1,4 @@
 app/templates/.compiled/*
 .idea/*
 assets/disco/*
+.vscode/*
