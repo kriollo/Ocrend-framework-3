@@ -55,15 +55,15 @@ class Sqlite extends \PDO implements Driver {
 
     /**
      * Selecciona elementos de una tabla y devuelve un objeto
-     * 
+     *
      * @param string $fields: Campos
      * @param string $table: Tabla
      * @param null|string $inners: Inners
      * @param null|string $where : Condiciones
      * @param null|int $limit: Límite de resultados
      * @param string $extra: Instrucciones extras
-     * 
-     * @return bool|stdClass
+     *
+     * @return bool|array
      */
     public function select(string $fields, string $table, $inners = null, $where = null, $limit = null, string $extra = '') {
         $result = $this->query("SELECT $fields FROM $table $inners "

@@ -1,9 +1,0 @@
-{
-    "recommendations": [
-        "brapifra.phpserver"
-    ],
-    "intelephense.exclude": [
-        "vendor",
-        "/Ocrend/vendor"
-    ],
-}
