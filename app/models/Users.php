@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * This file is part of the Ocrend Framewok 3 package.
  *
@@ -120,7 +122,7 @@ class Users extends Models implements IModels {
         global $session, $cookie, $config;
         
         # Generar un session hash
-        $cookie->set('session_hash', md5(time()), $config['sessions']['user_cookie']['lifetime']);
+        $cookie->set('session_hash', md5((string)time()), $config['sessions']['user_cookie']['lifetime']);
         
         # Generar la sesión del usuario
         $session->set($cookie->get('session_hash'). $config['sessions']['unique'] . '__user_id',(int) $user_data['id_user']);
@@ -242,7 +244,7 @@ class Users extends Models implements IModels {
      */
     public function getUserByIdPOST() {
         global $http;
-        $id_user = $http->request->get('id_user');
+        $id_user = (int)$http->request->get('id_user');
         $result = $this->getUserById($id_user);
         return $result === false ? false : $result[0];
     }
@@ -456,7 +458,7 @@ class Users extends Models implements IModels {
             }
 
             # Generar token y contraseña 
-            $token = md5(time());
+            $token = md5((string)time());
             $pass = uniqid();
             $link = $config['build']['url'] . 'lostpass?token='.$token.'&user='.$user_data[0]['id_user'];
 

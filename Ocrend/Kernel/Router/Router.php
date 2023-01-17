@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
  * This file is part of the Ocrend Framewok 3 package.
  *
@@ -249,7 +251,7 @@ final class Router implements IRouter {
         header('Content-Type: text/html; charset=utf-8');
         header('Content-language: es');
 
-        $output = file_get_contents('assets/error/catch.html', FILE_USE_INCLUDE_PATH);
+        $output = file_get_contents('assets/error/catch.html', (bool)FILE_USE_INCLUDE_PATH);
         echo $output;
     }
 
