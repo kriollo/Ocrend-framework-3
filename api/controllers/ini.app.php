@@ -30,7 +30,7 @@ $app->before(function () use ($app) {
         }
 
         # Recibir JSON
-        if (0 === strpos($http->headers->get('Content-Type'), 'application/json')) {
+        if (0 === strpos($http->headers->get('Content-Type') ?? "", 'application/json')) {
             $data = json_decode($http->getContent(), true);
             $http->request->replace(is_array($data) ? $data : []);
         }

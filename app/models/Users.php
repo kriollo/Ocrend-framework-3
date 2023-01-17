@@ -39,7 +39,7 @@ class Users extends Models implements IModels {
      *
      * @var int
      */
-    const MAX_ATTEMPTS_TIME = 120; # (dos minutos)
+    const MAX_ATTEMPTS_TIME = 120; // (dos minutos)
 
     /**
      * Log de intentos recientes con la forma 'email' => (int) intentos
@@ -81,11 +81,11 @@ class Users extends Models implements IModels {
      * @throws ModelsException en caso de que no tenga formato válido o ya exista
      */
     public function checkEmail(string $email) {
-        # Formato de email
+        // Formato de email
         if (!Helper\Strings::is_email($email)) {
             throw new ModelsException('El email no tiene un formato válido.');
         }
-        # Existencia de email
+        // Existencia de email
         $email = $this->db->scape($email);
         $query = $this->db->select('id_user', 'users', null, "email='$email'", 1);
         if (false !== $query) {
@@ -121,18 +121,18 @@ class Users extends Models implements IModels {
     private function generateSession(array $user_data) {
         global $session, $cookie, $config;
         
-        # Generar un session hash
+        // Generar un session hash
         $cookie->set('session_hash', md5((string)time()), $config['sessions']['user_cookie']['lifetime']);
         
-        # Generar la sesión del usuario
+        // Generar la sesión del usuario
         $session->set($cookie->get('session_hash'). $config['sessions']['unique'] . '__user_id',(int) $user_data['id_user']);
 
-        # Generar data encriptada para prolongar la sesión
+        // Generar data encriptada para prolongar la sesión
         if($config['sessions']['user_cookie']['enable']) {
-            # Generar id encriptado
+            // Generar id encriptado
             $encrypt = Helper\Strings::ocrend_encode($user_data['id_user'], $config['sessions']['user_cookie']['key_encrypt']);
 
-            # Generar cookies para prolongar la vida de la sesión
+            // Generar cookies para prolongar la vida de la sesión
             $cookie->set('appsalt', Helper\Strings::hash($encrypt), $config['sessions']['user_cookie']['lifetime']);
             $cookie->set('appencrypt', $encrypt, $config['sessions']['user_cookie']['lifetime']);
         }
@@ -151,13 +151,13 @@ class Users extends Models implements IModels {
         $email = $this->db->scape($email);
         $query = $this->db->select('id_user,pass,estado,name','users',null, "email='$email'",1);
         
-        # Incio de sesión con éxito
+        // Incio de sesión con éxito
         if(false !== $query && Helper\Strings::chash($query[0]['pass'],$pass) && $query[0]['estado'] == 1) {
 
-            # Restaurar intentos
+            // Restaurar intentos
             $this->restoreAttempts($email);
 
-            # Generar la sesión
+            // Generar la sesión
             $this->generateSession($query[0]);
             return true;
         }
@@ -188,8 +188,8 @@ class Users extends Models implements IModels {
     private function setNewAttempt(string $email) {
         if (!array_key_exists($email, $this->recentAttempts)) {
             $this->recentAttempts[$email] = [
-                'attempts' => 0, # Intentos
-                'time' => null # Tiempo 
+                'attempts' => 0, // Intentos
+                'time' => null // Tiempo 
             ];
         } 
 
@@ -209,15 +209,15 @@ class Users extends Models implements IModels {
     private function maximumAttempts(string $email) {
         if ($this->recentAttempts[$email]['attempts'] >= self::MAX_ATTEMPTS) {
             
-            # Colocar timestamp para recuperar más adelante la posibilidad de acceso
+            // Colocar timestamp para recuperar más adelante la posibilidad de acceso
             if (null == $this->recentAttempts[$email]['time']) {
                 $this->recentAttempts[$email]['time'] = time() + self::MAX_ATTEMPTS_TIME;
             }
             
             if (time() < $this->recentAttempts[$email]['time']) {
-                # Setear sesión
+                // Setear sesión
                 $this->updateSessionAttempts();
-                # Lanzar excepción
+                // Lanzar excepción
                 throw new ModelsException('Ya ha superado el límite de intentos para iniciar sesión.');
             } else {
                 $this->restoreAttempts($email);
@@ -273,7 +273,7 @@ class Users extends Models implements IModels {
                
             $user = $this->db->select($select,'users',null, "id_user='$this->id_user'",1);
 
-            # Si se borra al usuario desde la base de datos y sigue con la sesión activa
+            // Si se borra al usuario desde la base de datos y sigue con la sesión activa
             if(false === $user) {
                 $this->logout();
             }
@@ -293,25 +293,25 @@ class Users extends Models implements IModels {
         try {
             global $http;
 
-            # Definir de nuevo el control de intentos
+            // Definir de nuevo el control de intentos
             $this->setDefaultAttempts();   
 
-            # Obtener los datos $_POST
+            // Obtener los datos $_POST
             $email = strtolower($http->request->get('email'));
             $pass = $http->request->get('pass');
 
-            # Verificar que no están vacíos
+            // Verificar que no están vacíos
             if (Helper\Functions::e($email, $pass)) {
                 throw new ModelsException('Credenciales incompletas.');
             }
             
-            # Añadir intentos
+            // Añadir intentos
             $this->setNewAttempt($email);
         
-            # Verificar intentos 
+            // Verificar intentos 
             $this->maximumAttempts($email);
 
-            # Autentificar
+            // Autentificar
             if ($this->authentication($email, $pass)) {
                 return ['success' => 1, 'message' => 'Conectado con éxito.'];
             }
@@ -331,7 +331,7 @@ class Users extends Models implements IModels {
     public function registeruser() : array {
         try {
             global $http;
-            # Obtener los datos $_POST
+            // Obtener los datos $_POST
             $name = $http->request->get('name');
             $email = mb_strtolower($http->request->get('email'));
             $pass = $http->request->get('pass');
@@ -340,20 +340,20 @@ class Users extends Models implements IModels {
             $pagina_inicio = $http->request->get('pagina_inicio');
             $rol = $http->request->get('rol');
 
-            # Verificar que no están vacíos
+            // Verificar que no están vacíos
             if (Helper\Functions::e($name, $email, $pass, $pass_repeat)) {
                 throw new ModelsException('Todos los datos son necesarios');
             }elseif ($perfil == '--'){
                 throw new ModelsException('Debe seleccionar un perfil');
             }
 
-            # Verificar email 
+            // Verificar email 
             $this->checkEmail($email);
 
-            # Veriricar contraseñas
+            // Veriricar contraseñas
             $this->checkPassMatch($pass, $pass_repeat);
 
-            # Registrar al usuario
+            // Registrar al usuario
             $id_user = $this->db->insert('users', [
                 'name' => $name,
                 'email' => $email,
@@ -364,7 +364,11 @@ class Users extends Models implements IModels {
                 'fecha_pass' => date('Y-m-d')
             ]);
 
-            # Asigna menu a usuario
+            // duplica id sólo para RedBeanPHP
+            $this->db->Update('users', ['id' => $id_user], 'id_user = '.$id_user);
+
+
+            // Asigna menu a usuario
             if ('DEFINIDO' != $perfil ){
 
                 //$id_user=$this->db->lastInsertId();
@@ -392,14 +396,14 @@ class Users extends Models implements IModels {
             $pagina_inicio = $http->request->get('pagina_inicio');
             $rol = $http->request->get('rol');
 
-            # Verificar que no están vacíos
+            // Verificar que no están vacíos
             if (Helper\Functions::e($name, $email)) {
                 throw new ModelsException('Todos los datos son necesarios');
             }elseif ($perfil == '--'){
                 throw new ModelsException('Debe seleccionar un perfil');
             }
 
-            # Update al usuario
+            // Update al usuario
             $this->db->update('users', [
                 'name' => $name,
                 'email' => $email,
@@ -409,7 +413,7 @@ class Users extends Models implements IModels {
                 'fecha_pass' => date('Y-m-d')
             ],"id_user=".$id_user);
 
-            # Asigna menu a usuario
+            // Asigna menu a usuario
             if ('DEFINIDO' != $perfil ){
                 $this->db->query("Delete from tbladm_perfilesuser
                 WHERE id_user='$id_user';");
@@ -433,43 +437,43 @@ class Users extends Models implements IModels {
         try {
             global $http, $config;
 
-            # Obtener datos $_POST
+            // Obtener datos $_POST
             $email = $http->request->get('email');
             
-            # Campo lleno
+            // Campo lleno
             if (Helper\Functions::emp($email)) {
                 throw new ModelsException('El campo email debe estar lleno.');
             }
 
-            # Filtro
+            // Filtro
             $email = $this->db->scape($email);
             
-            # Verificar email 
+            // Verificar email 
             if (!Helper\Strings::is_email($email)) {
                 throw new ModelsException('El email no tiene un formato válido.');
             }
 
-            # Obtener información del usuario 
+            // Obtener información del usuario 
             $user_data = $this->db->select('id_user,name', 'users', null, "email='$email'", 1);
 
-            # Verificar correo en base de datos 
+            // Verificar correo en base de datos 
             if (false === $user_data) {
                 throw new ModelsException('El email no está registrado en el sistema.');
             }
 
-            # Generar token y contraseña 
+            // Generar token y contraseña 
             $token = md5((string)time());
             $pass = uniqid();
             $link = $config['build']['url'] . 'lostpass?token='.$token.'&user='.$user_data[0]['id_user'];
 
-            # Construir mensaje y enviar mensaje
+            // Construir mensaje y enviar mensaje
             $HTML = 'Hola <b>'. $user_data[0]['name'] .'</b>, ha solicitado recuperar su contraseña perdida, si no ha realizado esta acción no necesita hacer nada.
 					<br />
 					<br />
 					Para cambiar su contraseña por <b>'. $pass .'</b> haga <a href="'. $link .'" target="_blank">clic aquí</a> o en el botón de recuperar.';
 
                     
-            # Enviar el correo electrónico
+            // Enviar el correo electrónico
             $dest = [];
 			$dest[$email] = $user_data[0]['name'];
 
@@ -483,12 +487,12 @@ class Users extends Models implements IModels {
                 '{{copyright}}' => '&copy; '.date('Y') .' <a href="'.$config['build']['url'].'">'.$config['build']['name'].'</a> - Todos los derechos reservados.'
               ),0);
 
-            # Verificar si hubo algún problema con el envío del correo
+            // Verificar si hubo algún problema con el envío del correo
             if(false === $email_send) {
                 throw new ModelsException('No se ha podido enviar el correo electrónico.');
             }
 
-            # Actualizar datos 
+            // Actualizar datos 
             $id_user = $user_data[0]['id_user'];
             $this->db->update('users',array(
                 'tmp_pass' => Helper\Strings::hash($pass),
@@ -530,33 +534,33 @@ class Users extends Models implements IModels {
     public function changeTemporalPass() {
         global $config, $http;
         
-        # Obtener los datos $_GET 
+        // Obtener los datos $_GET 
         $id_user = $http->query->get('user');
         $token = $http->query->get('token');
 
         $success = false;
         if (!Helper\Functions::emp($token) && is_numeric($id_user) && $id_user >= 1) {
-            # Filtros a los datos
+            // Filtros a los datos
             $id_user = $this->db->scape($id_user);
             $token = $this->db->scape($token);
-            # Ejecutar el cambio
+            // Ejecutar el cambio
             $this->db->query("UPDATE users SET pass=tmp_pass, tmp_pass=NULL, token=NULL
             WHERE id_user='$id_user' AND token='$token' LIMIT 1;");
-            # Éxito
+            // Éxito
             $success = true;
         }
         
-        # Devolover al sitio de inicio
+        // Devolover al sitio de inicio
         Helper\Functions::redir($config['build']['url'] . '?sucess=' . (int) $success);
     }
     public function update_estado_user() {
         global $config;
 
-        # Actualiza Estado
+        // Actualiza Estado
         $this->db->query("UPDATE users SET estado=if(estado=0,1,0)
         WHERE id_user='$this->id' LIMIT 1;");
 
-        # Redireccionar a la página principal del controlador
+        // Redireccionar a la página principal del controlador
         Helper\Functions::redir($config['build']['url'] . 'users/usuarios');
     }
     final public function update_perfil_usuario() {
@@ -618,22 +622,22 @@ class Users extends Models implements IModels {
         try {
             global $http;
 
-            # Obtener los datos $_POST
+            // Obtener los datos $_POST
             $id_user = $http->request->get('id_user');
             $pass = $http->request->get('pass_new');
             $pass_repeat = $http->request->get('repass_new');
 
-            # Verificar que no están vacíos
+            // Verificar que no están vacíos
             if (Helper\Functions::e($pass, $pass_repeat)) {
                 throw new ModelsException('Todos los datos son necesarios');
             }
 
-            # Veriricar contraseñas
+            // Veriricar contraseñas
             $this->checkPassMatch($pass, $pass_repeat);
 
             $pass = Helper\Strings::hash($pass);
 
-            # Actualiza contraseña
+            // Actualiza contraseña
             $fecha_reset = date ( 'Y-m-j',strtotime ( '+60 day' , strtotime ( date("Y-m-d") ) ));
             $this->db->query("UPDATE users SET pass='$pass', fecha_pass='".$fecha_reset."', tmp_pass='', token=''
             WHERE id_user='$id_user' LIMIT 1;");
