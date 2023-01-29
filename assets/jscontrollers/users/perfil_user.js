@@ -1,6 +1,6 @@
 function updateAvatar(){
     var FormD = new FormData();
-    FormD.append("id_user",$("#id_user").val())
+    FormD.append("id_user",$("#id_user").val());
     FormD.append("avatar", document.getElementById('file_avatar').files[0]);
 
     $.ajax({
@@ -94,3 +94,21 @@ function resetpass(){
         }
     });
 }
+
+function updateModo(){
+    var mode = $("#updatemodeselect").val();
+    console.log("🚀 ~ file: perfil_user.js:100 ~ mode", mode)
+    
+    //save in local store the new mode
+    localStorage.setItem('modoViewTemplate',mode);
+    //reload page
+    location.reload();
+}
+
+// revisar cuando el documento este listo y seleccionar el modo de vista en el select
+$(document).ready(function(){
+    var modoViewTemplate = localStorage.getItem('modoViewTemplate');
+    if(modoViewTemplate != null){
+        $("#updatemodeselect").val(modoViewTemplate);
+    }
+});

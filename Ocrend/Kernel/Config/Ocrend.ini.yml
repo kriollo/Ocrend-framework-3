@@ -13,7 +13,7 @@ database:
       host: 127.0.0.1
       user: local
       pass: local
-      name: prueba
+      name: newproyect
       port: default
       socket: default
     sqlite3:
@@ -23,9 +23,9 @@ database:
 mailer:
   active: false
   requiere_validacion: true
-  host: mail.serverdecorreo.cl
-  user:
-  pass:
+  host: 
+  user: 
+  pass: 
   port: 25
   logo: 'assets/adminwys/img/AdminWYSLogo.png'
 
@@ -42,7 +42,7 @@ twig:
 build:
   production: false
   name: VSERV APP
-  url: http://127.0.0.1/proyectos/newproyect/
+  url: http://newproject/
   timezone: America/Santiago
   version: 3.2.1
 
@@ -64,7 +64,7 @@ api:
 router:
   ssl: false
   roots: newproyect
-  path: 127.0.0.1/proyectos/newproyect/
+  path: newproject/
   avatar: assets/adminwys/img/avatares/
   tmp_pdf: ./assets/tmp
   temp: /var/www/html/vserv/assets/tmp/

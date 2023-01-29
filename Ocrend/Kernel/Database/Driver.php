@@ -23,5 +23,6 @@ interface Driver {
     public function update(string $table, array $e, $where = null, $limit = null) : int;
     public function insert(string $table, array $e) : int;
     public function delete(string $table, $where = null, $limit = null) : int;
+    public function query_select(string $query);
     public function __destruct();
 }

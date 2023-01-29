@@ -28,7 +28,7 @@
         <!-- Toastr -->
         <link rel="stylesheet" href="assets/vendor/plugins/toastr/toastr.min.css">
          <!-- Pace style -->
-        <link rel="stylesheet" href="assets/vendor/plugins/pace-progress/themes/blue/pace-theme-loading-bar.css">
+        <link rel="stylesheet" href="assets/vendor/plugins/pace-progress/themes/black/pace-theme-flash.css">
         <!-- Theme style -->
         <link rel="stylesheet" href="assets/vendor/dist/css/adminlte.min.css">
         <!-- Alertas -->
@@ -36,8 +36,12 @@
         {% block appStylos %}
         {% endblock %}
     </head>
-
-    <body class="hold-transition sidebar-mini sidebar-collapse layout-navbar-fixed accent-danger">
+    {# hold-transition sidebar-mini sidebar-collapse layout-navbar-fixed accent-danger #}
+    <body class="sidebar-mini layout-fixed control-sidebar-slide-open">
+        <script>
+            //add o remove class dark-mode
+            const darkMode = localStorage.getItem("modoViewTemplate");
+        </script>
         <div class="wrapper"  id="adminwys">
             <div style="display: none;" id="cargador" align="center">
                 <br>
@@ -89,7 +93,26 @@
         <script src="assets/vendor/plugins/sweetalert2/sweetalert2.min.js"></script>
 
         <!-- PACE -->
+        <script>
+            paceOptions = {
+                // Only show the progress on regular and ajax-y page navigation,
+                // not every request
+                elements: false,
+                restartOnPushState: false,
+                restartOnRequestAfter: false,
+                eventLag: false,
+                ajax: {
+                    trackMethods: ['GET', 'POST', 'PUT', 'DELETE', 'REMOVE'],
+                    trackWebSockets: true,
+                    ignoreURLs: []
+                }
+            };
+            
+        </script>
         <script src="assets/vendor/plugins/pace-progress/pace.min.js"></script>
+        <script>
+            $(document).ajaxStart(function() { Pace.restart(); });
+        </script>
 
         <script src="assets/vendor/plugins/jquery-confirm/jquery-confirm.min.js"></script>
 
@@ -109,20 +132,9 @@
                     $('body').removeClass('sidebar-collapse');
                 }
             })
-    
-            $(document).ajaxStart(function() { Pace.restart(); });
+            
 
-             window.paceOptions = {
-                // Only show the progress on regular and ajax-y page navigation,
-                // not every request
-                restartOnRequestAfter: 5,
-
-                ajax: {
-                    trackMethods: ['GET', 'POST', 'PUT', 'DELETE', 'REMOVE'],
-                    trackWebSockets: true,
-                    ignoreURLs: []
-                }
-            };
+            
 
             moment.locale('es-us');
 
@@ -137,28 +149,23 @@
         {% endif %}
 
         {% if config['build']['production'] %}
-            <script src="assets/vendor/vue/vue.min.js"></script>
-            <script src="assets/vendor/vue/vuex.min.js"></script>
+            <script src="assets/vendor/vue/vue.global.prod.js"></script>
+            <script src="assets/vendor/vue/vue.demi.iife.min.js"></script>
+            <script src="assets/vendor/vue/pinia.iife.min.js"></script>
+            <script>
+                const mode_build = "prod";
+            </script>
+            <script  src="assets/jscontrollers/vue-instancia.min.js?{{ date()|date('U') }}"></script>
         {% else %}
-            <script src="assets/vendor/vue/vue.js"></script>
-            <script src="assets/vendor/vue/vuex.js"></script>
-            <script type="modele" src="assets/vendor/vue/vuex_logger.1.0.1.js"></script>
+            <script src="assets/vendor/vue/vue.global.js"></script>
+            <script src="assets/vendor/vue/vue.demi.iife.js"></script>
+            <script src="assets/vendor/vue/pinia.iife.js"></script>
+            <script>
+                const mode_build = "dev";
+            </script>
+            <script src="assets/jscontrollers/vue-instancia.js?{{ date()|date('U') }}"></script>
         {% endif %}
-        <script src="assets/vendor/vue/vue.filter.js"></script>
-        <script>
-            {% if config['build']['production'] %}
-                Vue.config.devtools = false;
-                Vue.config.debug = false;
-                Vue.config.silent = true;
-                const mode_build = false;
-            {% else %}
-                Vue.config.devtools = true;
-                Vue.config.debug = true;
-                Vue.config.silent = false;
-                const mode_build = true;
-            {% endif %}
-
-        </script>
+        {# <script src="assets/vendor/vue/vue.filter.js"></script> #}
 
         <script>
             const owner_user = JSON.parse('{{ owner_user | json_encode | raw }}');

@@ -26,8 +26,8 @@ class portalController extends Controllers implements IControllers {
     public function __construct(IRouter $router) {
         parent::__construct($router,[
             'users_logged' => true,
-            'valida_pass_vencida' => false,
-            'auto_reload_template' => false,
+            'valida_pass_vencida' => true,
+            'auto_reload_template' => true,
         ]);
 
         switch($this->method){

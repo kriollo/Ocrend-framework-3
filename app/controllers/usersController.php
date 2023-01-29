@@ -36,19 +36,17 @@ class usersController extends Controllers implements IControllers {
         $u = new Model\Users($router);
         switch($this->method){
             case 'perfiles':
-                $this->template->display('users/gest_perfiles', [
-                    'menu_op' => $op,
-                    'db_all_menu' => (new Model\Adminwys)->getAllMenu(),
-                    'db_perfiles' => (new Model\Adminwys)->getPerfiles()
+                $this->template->display('perfiles/master_perfiles', [
+                    'menu_op' => $op
                  ]);
             break;
             case 'usuarios':
                 $this->template->display('users/listar_users', [
                     'menu_op' => $op,
-                    'db_users' => (new Model\Prueba)->getAllUserRB()
+                    'db_users' => (new Model\Users)->getUsers()
                 ]);
             break;
-            case 'register_user': 
+            case 'register_user':
                 $this->template->display('users/master_user', [
                     'menu_op' => $op,
                     'id_user' => ""
@@ -71,9 +69,9 @@ class usersController extends Controllers implements IControllers {
                 if($this->isset_id and false !== ($data = $u->getUserById($router->getId(true)))) {
                     $this->template->display('users/update_perfil_user', [
                         'menu_op' => $op,
-                        'db_users' => $data[0],
+                        'db_users' => $data,
                         'db_all_menu' => (new Model\Adminwys)->getAllMenu(),
-                        'db_menu_user' => (new Model\Adminwys)->getMenuUser($data[0]['id_user'])
+                        'db_menu_user' => (new Model\Adminwys)->getMenuUser($data['id_user'])
                     ]);
                 } else {
                     Helper\Functions::redir($config['build']['url'] . 'users/&error=true');
@@ -83,8 +81,8 @@ class usersController extends Controllers implements IControllers {
                 $this->template->display('users/principal',[
                     'menu_op' => $op,
                     'q_perfiles' => count((new Model\Adminwys)->getPerfiles()),
-                    'q_users' => count($u->getUsers('*','estado = 1')),
-                    'q_users_online' => count($u->getUsers('*','online_fecha > 0')),
+                    'q_users' => count($u->getUsers('id','estado = 1')),
+                    'q_users_online' => count($u->getUsers('id','online_fecha > 0')),
                     'db_user_online' => $u->getUsers('name,email,perfil','online_fecha > 0'),
                     'last_user' => $u->getUsers('name,email,perfil','estado = 1 order by id_user desc Limit 5')
                 ]);

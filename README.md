@@ -1,7 +1,7 @@
-# Ocrend-Framework 3.2 + AdminLTE 3.1.0
+# Ocrend-Framework 3.5 + AdminLTE 3.2.0 Dark Mode
 
 ## Introducción
-### ¿Qué es Ocrend Framework 3.2? (compatible con PHP8)
+### ¿Qué es Ocrend Framework 3.5? (compatible con PHP8)
 
 Es un framework sencillo y robusto, escrito en **PHP 7** que utiliza la arquitectura **MVC** y componentes de symfony como base de su aplicación en el desarrollo web, adicionalmente pretende acelerar el proceso de desarrollo con unas cuantas herramientas. La curva de aprendizaje es bastante baja, el concepto del framework es ofrecer una arquitectura de sencillo manejo, inclusive para aquellos que jamás han programado utilizando MVC.
 
@@ -10,7 +10,7 @@ Desarrollado por [Brayan Narváez] https://github.com/prinick96 y mantenido por 
 ## Características
 - Arquitectura MVC (Modelo, Vista, Controlador) + API REST
 - Actualmente compatible con PHP 8 + MYSQL 
-- Integra la plantilla AdminLTE 3.1.0
+- Integra la plantilla AdminLTE 3.2.0 Dark Mode
 - Manejo de sesiones y cookies
 - Implementa un administrado de usuario y Perfil de Acceso
 - Evita el SQL Injection
@@ -25,7 +25,7 @@ Desarrollado por [Brayan Narváez] https://github.com/prinick96 y mantenido por 
 
 Para colocar el framework se requiere un servidor que cumpla con las siguientes características:
 
-* PHP 7 (Actualmente compatible con PHP 8)
+* PHP 7.4 (Actualmente compatible con PHP 8.0)
 * APACHE 2 (debes tener habilitada la opción de **mod_rewrite**)
 * MYSQL 5.5 (o superior) o MARIADB 10.0 (o superior)
 

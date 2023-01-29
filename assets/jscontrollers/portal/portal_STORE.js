@@ -1,20 +1,23 @@
 'use strict';
-export const store = new Vuex.Store({
-    state: {
-        menu: []
+export const pinia = Pinia.createPinia();
+export const usePortalStore = Pinia.defineStore('portalStore', {
+    state: () => {
+        return {
+            menu: [],
+        }
     },
-    mutations: {
-        SET_MENU(state, menu) {
-            state.menu = menu;
+    getters: {
+        gettMenu: (state) => {
+            return state.menu;
         }
     },
     actions: {
-        getMenu: async function({ commit }) {
+        getMenu: async function() {
             let response = await fetch('api/get_menu_user_by_POST', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
-                },
+                }
             });
             let result = await response.json();
             let menu = result;
@@ -22,8 +25,9 @@ export const store = new Vuex.Store({
                 menu = menu.reverse();
                 const MenuUnique = GetUniquedArrayObject('id_menu', menu);
                 MenuUnique.reverse();
-                commit('SET_MENU', MenuUnique);
+                this.menu = MenuUnique;
             }
+            return true;
         }
     }
 });

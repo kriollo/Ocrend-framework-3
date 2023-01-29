@@ -182,7 +182,17 @@ class Mysql extends \mysqli implements Driver {
         return $this->affected_rows;
     }
 
-    final public function query_select(string $query) {
+    /**
+     * Ejecuta una consulta y devuelve un arreglo asociativo con los resultados
+     * 
+     * @param string $query: Consulta a ejecutar
+     * 
+     * @throws \RuntimeException si la consulta no es de tipo SELECT
+     * @throws \RuntimeException si la consulta no devuelve resultados
+     * 
+     * @return array|bool con los resultados de la consulta
+     */
+    final public function query_select(string $query)  {
         $result = $this->query($query);
 
         if ( $this->error != "" ) {
@@ -193,7 +203,7 @@ class Mysql extends \mysqli implements Driver {
             return $result;
 
         if(false != $result && $result->num_rows) {
-            
+
             $matriz = (array) $result->fetch_all(MYSQLI_ASSOC);
             $result->free();
 

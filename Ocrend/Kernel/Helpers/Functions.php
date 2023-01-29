@@ -412,6 +412,38 @@ final class Functions extends \Twig_Extension {
   }
 
   /**
+   * Obtiene la url actual del sitio
+   *
+   * @return string
+   *
+   */
+  public static function getFullUrl(): string
+  {
+    $protocol = strpos(strtolower($_SERVER['SERVER_PROTOCOL']), 'https') === FALSE ? 'http' : 'https';
+    $host = $_SERVER['HTTP_HOST'];
+    $params = $_SERVER['REQUEST_URI'];
+
+    $currentUrl = $protocol . '://' . $host . $params;
+
+    return $currentUrl;
+  }
+
+  /**
+   * Obtiene la diferncia de dias entre dos fechas
+   *
+   * @return string
+   *
+   */
+  public static function getDiffDays($fecha1, $fecha2) : string
+  {
+    $fecha1 = new \DateTime($fecha1);
+    $fecha2 = new \DateTime($fecha2);
+    $interval = $fecha1->diff($fecha2);
+
+    return $interval->format('%R%a');
+  }
+
+  /**
    * Se obtiene de Twig_Extension y sirve para que cada función esté disponible como etiqueta en twig
    *
    * @return array con todas las funciones con sus respectivos nombres de acceso en plantillas twig
@@ -434,6 +466,8 @@ final class Functions extends \Twig_Extension {
        new \Twig_Function('desde_date', array($this, 'desde_date'))
     );
    }
+
+
 
   /**
    * Identificador único para la extensión de twig

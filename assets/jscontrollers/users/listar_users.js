@@ -40,7 +40,7 @@ $('#btn_reset_pass_user').click(function(e) {
                         body: json.message,
                         autohide: true,
                         delay: 5000
-                    })
+                    });
                     $('#modal_reset_pass_user').modal('hide');
                 } else {
                     $(document).Toasts('create', {
@@ -61,7 +61,7 @@ $('#btn_reset_pass_user').click(function(e) {
                     body: xhr.responseText,
                     autohide: true,
                     delay: 5000
-                })
+                });
             },
             complete: function(){
                 $ocrendForm.data('locked', false);
@@ -95,7 +95,7 @@ function carga_modal_select_campus_user(id_user){
                 body: xhr.responseText,
                 autohide: true,
                 delay: 5000
-            })
+            });
         }
     });
 }
@@ -125,7 +125,7 @@ $('#btn_select_campus_user').click(function(e) {
             processData:false,
             data : FormD,
             beforeSend: function(){
-                $ocrendForm.data('locked', true)
+                $ocrendForm.data('locked', true);
             },
             success : function(json) {
                 if(json.success == 1) {

@@ -16,7 +16,7 @@
     <div class="sidebar">
         <!-- Sidebar Menu -->
         <nav class="mt-2">
-            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview"  data-accordion="false">
+            <ul class="nav nav-pills nav-sidebar flex-column nav-child-indent" data-widget="treeview"  data-accordion="false">
                 {% set menu = "" %}
                 {% set seccion = "" %}
                 {% set cont = 0 %}
@@ -62,7 +62,43 @@
                 {% endif %}
                 <div class="user-panel d-flex">
                 </div>
-
+                <li class="nav-item">
+                    <a class="nav-link">
+                        <div class="custom-control custom-switch custom-switch-off-light custom-switch-on-dark">
+                            <input type="checkbox" class="custom-control-input" id="customSwitch3">
+                            <label class="custom-control-label" for="customSwitch3">
+                                <p id="text-Switch">
+                                </p>
+                            </label>
+                        </div>
+                    </a>
+                    <script>
+                        if(darkMode === "dark"){
+                            document.body.classList.add("dark-mode");
+                            document.getElementById("customSwitch3").checked = true;
+                            document.getElementById("text-Switch").innerHTML = "Modo Oscuro <i class='fas fa-moon'>";
+                        }else{
+                            document.body.classList.remove("dark-mode");
+                            document.getElementById("customSwitch3").checked = false;
+                            document.getElementById("text-Switch").innerHTML = "Modo Claro <i class='fas fa-sun'>";
+                        }
+                        const btnSwitch = document.getElementById('customSwitch3');
+                        btnSwitch.addEventListener('change', function() {
+                            const mode = this.checked ? "dark":"light";
+                            document.getElementById("text-Switch").innerHTML ="";
+                            if(this.checked){
+                                document.body.classList.add("dark-mode");
+                                document.getElementById("text-Switch").innerHTML = "Modo Oscuro <i class='fas fa-moon'>";
+                            }else{
+                                document.body.classList.remove("dark-mode");
+                                document.getElementById("text-Switch").innerHTML = "Modo Claro <i class='fas fa-sun'>";
+                            }
+                            localStorage.setItem('modoViewTemplate',mode);
+                        });
+                    </script>
+                </li>
+                <div class="user-panel d-flex">
+                </div>
                 <li class="nav-item">
                     <a href="logout" class="nav-link">
                         <i class="nav-icon fas fa-power-off"></i>

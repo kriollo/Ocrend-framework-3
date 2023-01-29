@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-/**
+/*
  * This file is part of the Ocrend Framewok 3 package.
  *
  * (c) Ocrend Software <info@ocrend.com>
@@ -18,16 +18,41 @@ use Ocrend\Kernel\Helpers as Helper;
 use Ocrend\Kernel\Models\Models;
 use Ocrend\Kernel\Models\IModels;
 use Ocrend\Kernel\Models\ModelsException;
-use Ocrend\Kernel\Models\Traits\DBModel;
 use Ocrend\Kernel\Router\IRouter;
 
+use Ocrend\Kernel\Models\Traits\RedBeanModel;
+use RedBeanPHP\R;
+
 /**
- * Modelo Users
+ * Modelo Prueba para conexión con RedBeanPHP
  */
 class Users extends Models implements IModels {
-    use DBModel;
+    use RedBeanModel;
 
     /**
+     * Constructor de la clase y conexión con RedBeanPHP
+     *
+     * @param IRouter $router: Objeto de enrutamiento
+     *
+     * @return void
+     */
+    public function __construct(IRouter $router = null) {
+        RedBeanModel::startRedBeanConexion();
+
+        parent::__construct($router);
+    }
+
+    /**
+     * Destructor de la clase y cierre de conexión con RedBeanPHP
+     *
+     * @return void
+     */
+    public function __destruct()
+    {
+        RedBeanModel::closeRedBeanConexion();
+    }
+
+     /**
      * Máximos intentos de inincio de sesión de un usuario
      *
      * @var int
@@ -86,9 +111,8 @@ class Users extends Models implements IModels {
             throw new ModelsException('El email no tiene un formato válido.');
         }
         // Existencia de email
-        $email = $this->db->scape($email);
-        $query = $this->db->select('id_user', 'users', null, "email='$email'", 1);
-        if (false !== $query) {
+        $query = R::findOne('users', 'email = ?', [$email]);
+        if (null !== $query) {
             throw new ModelsException('El email introducido ya existe.');
         }
     }
@@ -101,7 +125,7 @@ class Users extends Models implements IModels {
      * @throws ModelsException cuando hay un error de lógica utilizando este método
      * @return void
      */
-    private function restoreAttempts(string $email) {       
+    private function restoreAttempts(string $email) {
         if (array_key_exists($email, $this->recentAttempts)) {
             $this->recentAttempts[$email]['attempts'] = 0;
             $this->recentAttempts[$email]['time'] = null;
@@ -120,10 +144,10 @@ class Users extends Models implements IModels {
      */
     private function generateSession(array $user_data) {
         global $session, $cookie, $config;
-        
+
         // Generar un session hash
         $cookie->set('session_hash', md5((string)time()), $config['sessions']['user_cookie']['lifetime']);
-        
+
         // Generar la sesión del usuario
         $session->set($cookie->get('session_hash'). $config['sessions']['unique'] . '__user_id',(int) $user_data['id_user']);
 
@@ -148,17 +172,16 @@ class Users extends Models implements IModels {
      *              false: Cuando el inicio de sesión no es correcto
      */
     private function authentication(string $email,string $pass) : bool {
-        $email = $this->db->scape($email);
-        $query = $this->db->select('id_user,pass,estado,name','users',null, "email='$email'",1);
-        
+
+        $query = R::findOne('users','email = ?',[ $email ]);
         // Incio de sesión con éxito
-        if(false !== $query && Helper\Strings::chash($query[0]['pass'],$pass) && $query[0]['estado'] == 1) {
+        if(null !== $query && Helper\Strings::chash($query->pass,$pass) && $query->estado == 1) {
 
             // Restaurar intentos
             $this->restoreAttempts($email);
 
             // Generar la sesión
-            $this->generateSession($query[0]);
+            $this->generateSession($query->export());
             return true;
         }
 
@@ -177,7 +200,7 @@ class Users extends Models implements IModels {
             $this->recentAttempts = $session->get('login_user_recentAttempts');
         }
     }
-    
+
     /**
      * Establece el intento del usuario actual o incrementa su cantidad si ya existe
      *
@@ -208,12 +231,12 @@ class Users extends Models implements IModels {
      */
     private function maximumAttempts(string $email) {
         if ($this->recentAttempts[$email]['attempts'] >= self::MAX_ATTEMPTS) {
-            
+
             // Colocar timestamp para recuperar más adelante la posibilidad de acceso
             if (null == $this->recentAttempts[$email]['time']) {
                 $this->recentAttempts[$email]['time'] = time() + self::MAX_ATTEMPTS_TIME;
             }
-            
+
             if (time() < $this->recentAttempts[$email]['time']) {
                 // Setear sesión
                 $this->updateSessionAttempts();
@@ -223,18 +246,18 @@ class Users extends Models implements IModels {
                 $this->restoreAttempts($email);
             }
         }
-    }   
+    }
 
     /**
      * Obtiene datos de un usuario según su id en la base de datos
-     *    
-     * @param int $id: Id del usuario a obtener
+     *
+     * @param int : Id del usuario a obtener
      * @param string $select : Por defecto es *, se usa para obtener sólo los parámetros necesarios 
      *
      * @return false|array con información del usuario
-     */   
-    public function getUserById(int $id, string $select = '*') {
-        return $this->db->select($select,'users',null,"id_user='$id'",1);
+     */
+    public function getUserById(int $id , string $select = '*') {
+        return R::getRow('SELECT ' . $select . ' FROM users WHERE id_user = ? ',[ $id ]);
     }
 
     /**
@@ -246,7 +269,7 @@ class Users extends Models implements IModels {
         global $http;
         $id_user = (int)$http->request->get('id_user');
         $result = $this->getUserById($id_user);
-        return $result === false ? false : $result[0];
+        return $result === null ? false : $result;
     }
 
     /**
@@ -257,7 +280,8 @@ class Users extends Models implements IModels {
      * @return false|array con información de los usuarios
      */  
     public function getUsers(string $select = '*',string $filtro = '1=1') {
-        return $this->db->select($select, 'users','',$filtro);
+        Return R::getAll('SELECT ' . $select . ' FROM users WHERE ' . $filtro);
+        //return R::findAll('users',$filtro);
     }
 
     /**
@@ -269,18 +293,18 @@ class Users extends Models implements IModels {
      * @return array con datos del usuario conectado
      */
     public function getOwnerUser(string $select = '*') : array {
-        if(null !== $this->id_user) {    
-               
-            $user = $this->db->select($select,'users',null, "id_user='$this->id_user'",1);
+        if(null !== $this->id_user) {
+
+            $user = $this->getUserById($this->id_user,$select);
 
             // Si se borra al usuario desde la base de datos y sigue con la sesión activa
-            if(false === $user) {
+            if(null === $user) {
                 $this->logout();
             }
 
-            return $user[0];
-        } 
-           
+            return $user;
+        }
+
         throw new \RuntimeException('El usuario no está logeado.');
     }
 
@@ -304,10 +328,10 @@ class Users extends Models implements IModels {
             if (Helper\Functions::e($email, $pass)) {
                 throw new ModelsException('Credenciales incompletas.');
             }
-            
+
             // Añadir intentos
             $this->setNewAttempt($email);
-        
+
             // Verificar intentos 
             $this->maximumAttempts($email);
 
@@ -332,13 +356,15 @@ class Users extends Models implements IModels {
         try {
             global $http;
             // Obtener los datos $_POST
-            $name = $http->request->get('name');
-            $email = mb_strtolower($http->request->get('email'));
-            $pass = $http->request->get('pass');
-            $pass_repeat = $http->request->get('pass_repeat');
-            $perfil = mb_strtolower($http->request->get('perfil'));
-            $pagina_inicio = $http->request->get('pagina_inicio');
-            $rol = $http->request->get('rol');
+            $data = $http->request->get('user_data');
+
+            $name = (string)$data['name'];
+            $email = mb_strtolower((string)$data['email']);
+            $pass = (string)$data['pass'];
+            $pass_repeat = (string)$data['pass_repeat'];
+            $perfil = (string)$data['perfil'];
+            $pagina_inicio = (string)$data['pagina_inicio'];
+            $rol = (int)$data['rol'] === 'true' ? 1 : 0;
 
             // Verificar que no están vacíos
             if (Helper\Functions::e($name, $email, $pass, $pass_repeat)) {
@@ -347,37 +373,35 @@ class Users extends Models implements IModels {
                 throw new ModelsException('Debe seleccionar un perfil');
             }
 
-            // Verificar email 
+            // Verificar email
             $this->checkEmail($email);
 
             // Veriricar contraseñas
             $this->checkPassMatch($pass, $pass_repeat);
 
             // Registrar al usuario
-            $id_user = $this->db->insert('users', [
-                'name' => $name,
-                'email' => $email,
-                'pass' => Helper\Strings::hash($pass),
-                'perfil' => $perfil,
-                'pagina_inicio' => $pagina_inicio,
-                'rol' => $rol,
-                'fecha_pass' => date('Y-m-d')
-            ]);
+            $user = R::dispense('users');
+            $user->name = $name;
+            $user->email = $email;
+            $user->pass = Helper\Strings::hash($pass);
+            $user->perfil = $perfil;
+            $user->pagina_inicio = $pagina_inicio;
+            $user->rol = $rol;
+            $user->fecha_pass = date('Y-m-d');
+            $id_user = R::store($user);
 
             // duplica id sólo para RedBeanPHP
-            $this->db->Update('users', ['id' => $id_user], 'id_user = '.$id_user);
+            $user = R::load('users', $id_user);
+            $user->id_user = $id_user;
+            R::store($user);
 
 
             // Asigna menu a usuario
             if ('DEFINIDO' != $perfil ){
+                R::exec("DELETE from tbladm_perfilesuser WHERE id_user=?;",[$id_user]);
 
-                //$id_user=$this->db->lastInsertId();
-
-                $this->db->query("DELETE from tbladm_perfilesuser
-                WHERE id_user='".$id_user."';");
-
-                $this->db->query("INSERT INTO tbladm_perfilesuser(id_user,id_menu,id_submenu)
-                select '".$id_user."',id_menu,id_submenu FROM tbladm_perfiles WHERE LCASE(nombre)='$perfil';");
+                R::exec("Insert Into tbladm_perfilesuser(id_user,id_menu,id_submenu)
+                select ?,id_menu,id_submenu from tbladm_perfiles where nombre=?;",[$id_user,$perfil]);
             }
 
             return ['success' => 1, 'title' => 'Maestro de Usuario','message' => 'Registrado con éxito.'];
@@ -389,12 +413,14 @@ class Users extends Models implements IModels {
         try {
             global $http;
 
-            $id_user = $http->request->get('id_user');
-            $name = $http->request->get('name');
-            $email = strtolower($http->request->get('email'));
-            $perfil = $http->request->get('perfil');
-            $pagina_inicio = $http->request->get('pagina_inicio');
-            $rol = $http->request->get('rol');
+            $data = $http->request->get('user_data');
+
+            $id_user = (int)$data['id_user'];
+            $name =  (string)$data['name'];
+            $email = strtolower((string)$data['email']);
+            $perfil =  (string)$data['perfil'];
+            $pagina_inicio =  (string)$data['pagina_inicio'];
+            $rol =  (int)($data['rol'] === 'true' ? 1 : 0);
 
             // Verificar que no están vacíos
             if (Helper\Functions::e($name, $email)) {
@@ -403,23 +429,21 @@ class Users extends Models implements IModels {
                 throw new ModelsException('Debe seleccionar un perfil');
             }
 
-            // Update al usuario
-            $this->db->update('users', [
-                'name' => $name,
-                'email' => $email,
-                'perfil' => $perfil,
-                'pagina_inicio' => $pagina_inicio,
-                'rol' => $rol,
-                'fecha_pass' => date('Y-m-d')
-            ],"id_user=".$id_user);
+            $user = R::load('users', $id_user);
+                $user->name = $name;
+                $user->email = $email;
+                $user->perfil = $perfil;
+                $user->pagina_inicio = $pagina_inicio;
+                $user->rol = $rol;
+                $user->fecha_pass = date('Y-m-d');
+            R::store($user);
 
             // Asigna menu a usuario
             if ('DEFINIDO' != $perfil ){
-                $this->db->query("Delete from tbladm_perfilesuser
-                WHERE id_user='$id_user';");
+                R::exec("DELETE from tbladm_perfilesuser WHERE id_user=?;",[$id_user]);
 
-                $this->db->query("Insert Into tbladm_perfilesuser(id_user,id_menu,id_submenu)
-                select '$id_user',id_menu,id_submenu from tbladm_perfiles where nombre='$perfil';");
+                R::exec("Insert Into tbladm_perfilesuser(id_user,id_menu,id_submenu)
+                select ?,id_menu,id_submenu from tbladm_perfiles where nombre=?;",[$id_user,$perfil]);
             }
 
             return ['success' => 1, 'title' => 'Maestro de Usuario','message' => 'Actualizado con éxito.'];
@@ -432,50 +456,46 @@ class Users extends Models implements IModels {
       * Si el usuario no visita el enlace, el sistema no cambiará la contraseña.
       *
       * @return array<string,integer|string>
-    */  
+    */
     public function lostpass() : array {
         try {
             global $http, $config;
 
             // Obtener datos $_POST
             $email = $http->request->get('email');
-            
+
             // Campo lleno
             if (Helper\Functions::emp($email)) {
                 throw new ModelsException('El campo email debe estar lleno.');
             }
 
-            // Filtro
-            $email = $this->db->scape($email);
-            
-            // Verificar email 
+            // Verificar email
             if (!Helper\Strings::is_email($email)) {
                 throw new ModelsException('El email no tiene un formato válido.');
             }
+            // Obtener información del usuario
+            $user_data = R::findOne('users', 'email = ?', [$email])->export();
 
-            // Obtener información del usuario 
-            $user_data = $this->db->select('id_user,name', 'users', null, "email='$email'", 1);
-
-            // Verificar correo en base de datos 
-            if (false === $user_data) {
+            // Verificar correo en base de datos
+            if (null === $user_data) {
                 throw new ModelsException('El email no está registrado en el sistema.');
             }
 
-            // Generar token y contraseña 
+            // Generar token y contraseña
             $token = md5((string)time());
             $pass = uniqid();
-            $link = $config['build']['url'] . 'lostpass?token='.$token.'&user='.$user_data[0]['id_user'];
+            $link = $config['build']['url'] . 'lostpass?token='.$token.'&user='.$user_data['id_user'];
 
             // Construir mensaje y enviar mensaje
-            $HTML = 'Hola <b>'. $user_data[0]['name'] .'</b>, ha solicitado recuperar su contraseña perdida, si no ha realizado esta acción no necesita hacer nada.
+            $HTML = 'Hola <b>'. $user_data['name'] .'</b>, ha solicitado recuperar su contraseña perdida, si no ha realizado esta acción no necesita hacer nada.
 					<br />
 					<br />
 					Para cambiar su contraseña por <b>'. $pass .'</b> haga <a href="'. $link .'" target="_blank">clic aquí</a> o en el botón de recuperar.';
 
-                    
+
             // Enviar el correo electrónico
             $dest = [];
-			$dest[$email] = $user_data[0]['name'];
+			$dest[$email] = $user_data['name'];
 
             $email_send = Helper\Emails::send($dest,array(
                 '{{title}}' => 'Recuperar contraseña de ' . $config['build']['name'],
@@ -492,12 +512,11 @@ class Users extends Models implements IModels {
                 throw new ModelsException('No se ha podido enviar el correo electrónico.');
             }
 
-            // Actualizar datos 
-            $id_user = $user_data[0]['id_user'];
-            $this->db->update('users',array(
-                'tmp_pass' => Helper\Strings::hash($pass),
-                'token' => $token
-            ),"id_user='$id_user'",1);
+            // Actualizar datos
+            $user = R::load('users', $user_data['id_user']);
+                $user->tmp_pass = Helper\Strings::hash($pass);
+                $user->token = $token;
+            R::store($user);
 
             return ['success' => 1, 'message' => 'Se ha enviado un enlace a su correo electrónico.'];
         } catch(ModelsException $e) {
@@ -530,26 +549,29 @@ class Users extends Models implements IModels {
      * La URL debe tener la forma URL/lostpass?token=TOKEN&user=ID
      *
      * @return void
-     */  
+     */
     public function changeTemporalPass() {
         global $config, $http;
-        
-        // Obtener los datos $_GET 
+
+        // Obtener los datos $_GET
         $id_user = $http->query->get('user');
         $token = $http->query->get('token');
 
         $success = false;
         if (!Helper\Functions::emp($token) && is_numeric($id_user) && $id_user >= 1) {
-            // Filtros a los datos
-            $id_user = $this->db->scape($id_user);
-            $token = $this->db->scape($token);
-            // Ejecutar el cambio
-            $this->db->query("UPDATE users SET pass=tmp_pass, tmp_pass=NULL, token=NULL
-            WHERE id_user='$id_user' AND token='$token' LIMIT 1;");
-            // Éxito
-            $success = true;
+
+            $user = R::load('users', $id_user);
+            if($user->token === $token) {
+                    $user->pass = $user->tmp_pass;
+                    $user->tmp_pass = null;
+                    $user->token = null;
+                R::store($user);
+
+                // Éxito
+                $success = true;
+            }
         }
-        
+
         // Devolover al sitio de inicio
         Helper\Functions::redir($config['build']['url'] . '?sucess=' . (int) $success);
     }
@@ -557,8 +579,9 @@ class Users extends Models implements IModels {
         global $config;
 
         // Actualiza Estado
-        $this->db->query("UPDATE users SET estado=if(estado=0,1,0)
-        WHERE id_user='$this->id' LIMIT 1;");
+        $user = R::load('users', $this->id);
+            $user->estado = !$user->estado;
+        R::store($user);
 
         // Redireccionar a la página principal del controlador
         Helper\Functions::redir($config['build']['url'] . 'users/usuarios');
@@ -566,31 +589,30 @@ class Users extends Models implements IModels {
     final public function update_perfil_usuario() {
         try {
             global $http;
-  
+
             $id_user = $http->request->get('id_user');
-  
-            $this->db->query("Delete from tbladm_perfilesuser
-            WHERE id_user='$id_user';");
-  
+
+            R::exec("DELETE FROM tbladm_perfilesuser WHERE id_user='$id_user';");
+
             $p = (new Model\Adminwys)->getAllMenu();
             foreach ($p as $value => $data) {
-  
+
                 $a = $http->request->get('check-'.$data['id_menu'].'-'.$data['id_submenu']);
                 if (true == $a){
                     $id_menu = $data['id_menu'];
                     $id_submenu = $data['id_submenu'];
-                    $this->db->insert('tbladm_perfilesuser',array(
-                        'id_user' => $id_user,
-                        'id_menu' => $id_menu,
-                        'id_submenu' => $id_submenu
-                    ));
+                    $perfil = R::dispense('tbladm_perfilesuser');
+                        $perfil->id_user = $id_user;
+                        $perfil->id_menu = $id_menu;
+                        $perfil->id_submenu = $id_submenu;
+                    R::store($perfil);
                 }
             }
-  
-            $this->db->update('users',array(
-                'perfil' => 'DEFINIDO'
-            ),"id_user='$id_user'");
-  
+
+            $user = R::load('users', $id_user);
+                $user->perfil = 'DEFINIDO';
+            R::store($user);
+
             return ['success' => 1, 'message' => 'Registrado con éxito.'];
         } catch (ModelsException $e) {
             return ['success' => 0, 'message' => $e->getMessage()];
@@ -608,7 +630,8 @@ class Users extends Models implements IModels {
                 $img_name = $id_user.'.'.$ext_foto;
 
                 $avatar->move(___ROOT___ . $config['router']['avatar'], $img_name);
-                $this->db->query("UPDATE users SET foto=1, name_foto='".$img_name."' WHERE id_user='$id_user'");
+                R::exec("UPDATE users SET foto=1, name_foto=? WHERE id_user=?", [$img_name, $id_user]);
+
                 return ['success' => 1, 'message' => "Avatar Actualizado..."];
             }
 
@@ -639,8 +662,9 @@ class Users extends Models implements IModels {
 
             // Actualiza contraseña
             $fecha_reset = date ( 'Y-m-j',strtotime ( '+60 day' , strtotime ( date("Y-m-d") ) ));
-            $this->db->query("UPDATE users SET pass='$pass', fecha_pass='".$fecha_reset."', tmp_pass='', token=''
-            WHERE id_user='$id_user' LIMIT 1;");
+
+            R::exec("UPDATE users SET pass=?, fecha_pass=?, tmp_pass='', token=''
+            WHERE id_user=? LIMIT 1;", [$pass, $fecha_reset,$id_user]);
 
             return ['success' => 1, 'title' => 'Reset Password Usuario','message' => 'Password actualizada con éxito.'];
         } catch (ModelsException $e) {
@@ -652,9 +676,8 @@ class Users extends Models implements IModels {
      * Obtiene el menu asignado al usuario, pero si su rol es administrador, obtiene todos los menus
      * @return array
      */
-    public function getMenuOwnerUser() {
-        $user = $this->getUserById($this->id_user,"rol");
-        return $user[0]['rol'] == 1 ? (new Model\Adminwys)->getAllMenu(): (new Model\Adminwys)->getMenuUser($this->id_user);
+    public function getMenuOwnerUser(int $rol = 0) {
+        return $rol == 1 ? (new Model\Adminwys)->getAllMenu(): (new Model\Adminwys)->getMenuUser($this->id_user);
     }
 
     /**
@@ -664,26 +687,26 @@ class Users extends Models implements IModels {
     public function update_online_user($opcion) {
         $ahora = time();
         $limite = $ahora-24*60;
-        $this->db->query("UPDATE users SET online_fecha=0 WHERE online_fecha < $limite;");
+        R::exec("UPDATE users SET online_fecha=0 WHERE online_fecha < ?;", [$limite]);
 
         if ($opcion === 'in')
-            $this->db->query("UPDATE users SET online_fecha = $ahora WHERE id_user = $this->id_user LIMIT 1;");
+            R::exec("UPDATE users SET online_fecha = $ahora WHERE id_user = ? LIMIT 1;", [$this->id_user]);
 
          if ($opcion === 'out')
-            $this->db->query("UPDATE users SET online_fecha=0 WHERE id_user = $this->id_user LIMIT 1;");
+            R::exec("UPDATE users SET online_fecha=0 WHERE id_user = ? LIMIT 1;", [$this->id_user]);
     }
 
     /**
      * Obtiene la fecha de cambio de contraseña
      * @return bool
      */
-    public function validar_cambio_pass() {
-        $result = $this->db->query_select('SELECT fecha_pass from users where id_user="'.$this->id_user.'" and  fecha_pass<=date(now())');
-        return  false !== $result;
-    }
+    public function validar_cambio_pass($fechapass) {
 
-    public function __construct(IRouter $router = null) {
-        parent::__construct($router);
-        $this->startDBConexion();
+        $dias = Helper\Functions::getDiffDays(date("Y-m-d"),$fechapass);
+        if( (int)$dias<= 0){
+            return true;
+        }else{
+            return false;
+        }
     }
 }

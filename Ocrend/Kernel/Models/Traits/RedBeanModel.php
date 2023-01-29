@@ -16,7 +16,7 @@ trait RedBeanModel {
      *
      * @return void
      */
-    static function startRedBeanConexion($driver = null) {
+    public static function startRedBeanConexion($driver = null) {
         global $config;
 
         if($driver == null) {
@@ -24,9 +24,14 @@ trait RedBeanModel {
         }
         switch ($driver) {
             case 'mysql':
-                R::setup('mysql:host='.$config['database']['drivers']['mysql']['host'].';dbname='.$config['database']['drivers']['mysql']['name'],
-                $config['database']['drivers']['mysql']['user'],
-                $config['database']['drivers']['mysql']['pass']);
+                if (R::$currentDB == null) {
+                    R::setup(
+                        'mysql:host=' . $config['database']['drivers']['mysql']['host'] . ';dbname=' . $config['database']['drivers']['mysql']['name'],
+                        $config['database']['drivers']['mysql']['user'],
+                        $config['database']['drivers']['mysql']['pass']
+                    );
+                    // R::debug(true);
+                }
             break;
             case 'sqlite3':
                 R::setup('sqlite:'.$config['database']['drivers']['sqlite3']['file'], '', '');
@@ -34,7 +39,7 @@ trait RedBeanModel {
         }
     }
 
-    protected function closeRedBeanConexion() {
+    public static function closeRedBeanConexion() {
         R::close();
     }
 

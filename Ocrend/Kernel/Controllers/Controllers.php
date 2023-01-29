@@ -126,15 +126,15 @@ abstract class Controllers {
 
         # Datos del usuario actual
         if ($this->is_logged) {
-            $this->user = (new Model\Users)->getOwnerUser('id_user,name,rol,perfil,pagina_inicio,foto,name_foto,email');
+            $this->user = (new Model\Users)->getOwnerUser('id_user,name,rol,perfil,pagina_inicio,foto,name_foto,email,fecha_pass');
             $this->template->addGlobal('owner_user', $this->user);
 
             (new Model\Users)->update_online_user('in');
 
-            $this->menu_user = (new Model\Users)->getMenuOwnerUser();
+            $this->menu_user = (new Model\Users)->getMenuOwnerUser((int)$this->user['rol']);
             $this->template->addGlobal('menu_user', $this->menu_user );
 
-            $this->user_resetpass = (new Model\Users)->validar_cambio_pass();
+            $this->user_resetpass = (new Model\Users)->validar_cambio_pass($this->user['fecha_pass']);
         }
 
         # Extensiones
@@ -177,12 +177,13 @@ abstract class Controllers {
      * @return void
      */
     private function valida_pass_vencida() {
-        global $config;
-
-        if ($this->user_resetpass != false && $this->controllerConfig['valida_pass_vencida']) {
-          $helperFunction = new Helper\Functions;
-          $helperFunction->redir($config['build']['url']. 'portal/perfil_user');
+      global $config;
+      if ($this->user_resetpass && $this->controllerConfig['valida_pass_vencida']) {
+        $urlActual = Helper\Functions::getFullUrl();
+        if($config['build']['url'] . 'portal/perfil_user' != $urlActual) {
+          Helper\Functions::redir($config['build']['url']. 'portal/perfil_user');
         }
+      }
     }
 
     /**

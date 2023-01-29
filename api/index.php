@@ -43,7 +43,8 @@ function ___loadApi() {
     require 'controllers/ini.app.php';
     require 'controllers/get.controllers.php';
     require 'controllers/post.controllers.php';
-   
+    require 'controllers/adminwys.controllers.php';
+
     $app->run();
 }
 

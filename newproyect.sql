@@ -1,6 +1,6 @@
 -- --------------------------------------------------------
 -- Host:                         127.0.0.1
--- Versión del servidor:         10.3.15-MariaDB - mariadb.org binary distribution
+-- Versión del servidor:         8.0.31 - MySQL Community Server - GPL
 -- SO del servidor:              Win64
 -- HeidiSQL Versión:             12.0.0.6468
 -- --------------------------------------------------------
@@ -17,13 +17,13 @@
 
 -- Volcando estructura de base de datos para newproyect
 DROP DATABASE IF EXISTS `newproyect`;
-CREATE DATABASE IF NOT EXISTS `newproyect` /*!40100 DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci */;
+CREATE DATABASE IF NOT EXISTS `newproyect` /*!40100 DEFAULT CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `newproyect`;
 
 -- Volcando estructura para función newproyect.digitoverificador
 DROP FUNCTION IF EXISTS `digitoverificador`;
 DELIMITER //
-CREATE FUNCTION `digitoverificador`(`rut` INT UNSIGNED) RETURNS varchar(1) CHARSET utf8 COLLATE utf8_unicode_ci
+CREATE FUNCTION `digitoverificador`(`rut` INT UNSIGNED) RETURNS varchar(1) CHARSET utf8mb3 COLLATE utf8mb3_unicode_ci
 BEGIN
 
 DECLARE dv VARCHAR(1);
@@ -66,7 +66,7 @@ DELIMITER ;
 -- Volcando estructura para función newproyect.mes_palabras
 DROP FUNCTION IF EXISTS `mes_palabras`;
 DELIMITER //
-CREATE FUNCTION `mes_palabras`(fecha DATETIME) RETURNS varchar(20) CHARSET utf8 COLLATE utf8_unicode_ci
+CREATE FUNCTION `mes_palabras`(fecha DATETIME) RETURNS varchar(20) CHARSET utf8mb3 COLLATE utf8mb3_unicode_ci
 BEGIN
 
 	DECLARE mes VARCHAR(20);
@@ -81,114 +81,127 @@ DELIMITER ;
 -- Volcando estructura para tabla newproyect.tbladm_menu
 DROP TABLE IF EXISTS `tbladm_menu`;
 CREATE TABLE IF NOT EXISTS `tbladm_menu` (
-  `id_menu` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `posi` int(10) unsigned NOT NULL,
-  `seccion` varchar(50) COLLATE utf8_unicode_ci NOT NULL DEFAULT '0',
-  `descripcion` varchar(45) COLLATE utf8_unicode_ci NOT NULL,
-  `glyphicon` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `estado` tinyint(4) DEFAULT 1,
+  `id_menu` int unsigned NOT NULL AUTO_INCREMENT,
+  `posi` int unsigned NOT NULL,
+  `seccion` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL DEFAULT '0',
+  `descripcion` varchar(45) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
+  `glyphicon` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
+  `estado` tinyint DEFAULT '1',
   PRIMARY KEY (`id_menu`,`posi`) USING BTREE
-) ENGINE=MyISAM AUTO_INCREMENT=102 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=102 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
--- Volcando datos para la tabla newproyect.tbladm_menu: 1 rows
+-- Volcando datos para la tabla newproyect.tbladm_menu: 2 rows
 DELETE FROM `tbladm_menu`;
 /*!40000 ALTER TABLE `tbladm_menu` DISABLE KEYS */;
 INSERT INTO `tbladm_menu` (`id_menu`, `posi`, `seccion`, `descripcion`, `glyphicon`, `estado`) VALUES
-	(99, 9, 'ADMINISTRACION', 'USUARIOS', 'fas fa-users', 1);
+	(99, 9, 'ADMINISTRACION', 'USUARIOS', 'fas fa-users', 1),
+	(1, 1, 'PRUEBA', 'PRUEBA', 'fas fa-save', 1);
 /*!40000 ALTER TABLE `tbladm_menu` ENABLE KEYS */;
 
 -- Volcando estructura para tabla newproyect.tbladm_perfiles
 DROP TABLE IF EXISTS `tbladm_perfiles`;
 CREATE TABLE IF NOT EXISTS `tbladm_perfiles` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `nombre` varchar(35) COLLATE utf8_unicode_ci NOT NULL,
-  `id_menu` int(10) NOT NULL DEFAULT 0,
-  `id_submenu` int(10) NOT NULL DEFAULT 0,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(35) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
+  `id_menu` int NOT NULL DEFAULT '0',
+  `id_submenu` int NOT NULL DEFAULT '0',
+  `url` varchar(50) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=MyISAM AUTO_INCREMENT=109 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=81 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
--- Volcando datos para la tabla newproyect.tbladm_perfiles: 0 rows
+-- Volcando datos para la tabla newproyect.tbladm_perfiles: 4 rows
 DELETE FROM `tbladm_perfiles`;
 /*!40000 ALTER TABLE `tbladm_perfiles` DISABLE KEYS */;
+INSERT INTO `tbladm_perfiles` (`id`, `nombre`, `id_menu`, `id_submenu`, `url`) VALUES
+	(80, 'MEDIO', 99, 3, 'users/perfiles'),
+	(79, 'MEDIO', 99, 2, 'users/perfiles'),
+	(78, 'MEDIO', 1, 1, 'users/perfiles'),
+	(57, 'BASICO', 1, 1, 'portal');
 /*!40000 ALTER TABLE `tbladm_perfiles` ENABLE KEYS */;
 
 -- Volcando estructura para tabla newproyect.tbladm_perfilesuser
 DROP TABLE IF EXISTS `tbladm_perfilesuser`;
 CREATE TABLE IF NOT EXISTS `tbladm_perfilesuser` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `id_user` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
-  `id_menu` int(10) unsigned NOT NULL,
-  `id_submenu` int(10) unsigned NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `id_user` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
+  `id_menu` int unsigned NOT NULL,
+  `id_submenu` int unsigned NOT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   KEY `id_user_id_menu_id_submenu` (`id_user`,`id_menu`,`id_submenu`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=33 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
--- Volcando datos para la tabla newproyect.tbladm_perfilesuser: 0 rows
+-- Volcando datos para la tabla newproyect.tbladm_perfilesuser: 10 rows
 DELETE FROM `tbladm_perfilesuser`;
 /*!40000 ALTER TABLE `tbladm_perfilesuser` DISABLE KEYS */;
+INSERT INTO `tbladm_perfilesuser` (`id`, `id_user`, `id_menu`, `id_submenu`) VALUES
+	(31, '6', 99, 3),
+	(30, '6', 99, 2),
+	(29, '6', 1, 1),
+	(28, '5', 99, 3),
+	(27, '5', 99, 2),
+	(32, '3', 1, 1),
+	(26, '5', 1, 1),
+	(25, '4', 99, 3),
+	(24, '4', 99, 2),
+	(23, '4', 1, 1);
 /*!40000 ALTER TABLE `tbladm_perfilesuser` ENABLE KEYS */;
 
 -- Volcando estructura para tabla newproyect.tbladm_submenu
 DROP TABLE IF EXISTS `tbladm_submenu`;
 CREATE TABLE IF NOT EXISTS `tbladm_submenu` (
-  `id_menu` int(10) unsigned NOT NULL,
-  `id_submenu` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `PosS` int(10) unsigned NOT NULL,
-  `url` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
-  `descripcion` varchar(45) COLLATE utf8_unicode_ci NOT NULL,
-  `estado` smallint(5) unsigned NOT NULL DEFAULT 1,
+  `id_menu` int unsigned NOT NULL,
+  `id_submenu` int unsigned NOT NULL AUTO_INCREMENT,
+  `PosS` int unsigned NOT NULL,
+  `url` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
+  `descripcion` varchar(45) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
+  `estado` smallint unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`id_menu`,`id_submenu`,`PosS`) USING BTREE
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
--- Volcando datos para la tabla newproyect.tbladm_submenu: 3 rows
+-- Volcando datos para la tabla newproyect.tbladm_submenu: 4 rows
 DELETE FROM `tbladm_submenu`;
 /*!40000 ALTER TABLE `tbladm_submenu` DISABLE KEYS */;
 INSERT INTO `tbladm_submenu` (`id_menu`, `id_submenu`, `PosS`, `url`, `descripcion`, `estado`) VALUES
 	(99, 1, 1, 'users', 'Principal', 1),
 	(99, 2, 2, 'users/usuarios', 'Usuarios', 1),
-	(99, 3, 3, 'users/perfiles', 'Gestion de Pefiles', 1);
+	(99, 3, 3, 'users/perfiles', 'Gestion de Pefiles', 1),
+	(1, 1, 1, 'prueba', 'Principal', 1);
 /*!40000 ALTER TABLE `tbladm_submenu` ENABLE KEYS */;
 
 -- Volcando estructura para tabla newproyect.users
 DROP TABLE IF EXISTS `users`;
 CREATE TABLE IF NOT EXISTS `users` (
-  `id_user` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `id` int(11) unsigned NOT NULL,
-  `name` varchar(100) COLLATE utf8_unicode_ci NOT NULL,
-  `email` varchar(150) COLLATE utf8_unicode_ci NOT NULL,
-  `pass` varchar(90) COLLATE utf8_unicode_ci NOT NULL,
-  `tmp_pass` varchar(90) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `token` varchar(90) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `perfil` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
-  `rol` smallint(1) NOT NULL DEFAULT 0,
-  `estado` smallint(1) NOT NULL DEFAULT 1,
-  `foto` smallint(1) NOT NULL DEFAULT 0,
-  `name_foto` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `pagina_inicio` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
-  `online_fecha` int(20) NOT NULL DEFAULT 0,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `id_user` int unsigned DEFAULT NULL,
+  `name` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
+  `email` varchar(150) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
+  `pass` varchar(90) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
+  `tmp_pass` varchar(90) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
+  `token` varchar(90) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
+  `perfil` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
+  `rol` tinyint(1) NOT NULL DEFAULT '0',
+  `estado` tinyint(1) NOT NULL DEFAULT '1',
+  `foto` tinyint(1) NOT NULL DEFAULT '0',
+  `name_foto` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci DEFAULT NULL,
+  `pagina_inicio` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
+  `online_fecha` int NOT NULL DEFAULT '0',
   `fecha_pass` date NOT NULL,
-  `tipo_user` varchar(10) COLLATE utf8_unicode_ci NOT NULL DEFAULT 'sistema',
-  PRIMARY KEY (`id_user`),
-  KEY `tipo_user_rut_cliente` (`tipo_user`)
-) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+  `tipo_user` varchar(10) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL DEFAULT 'sistema',
+  PRIMARY KEY (`id`),
+  KEY `tipo_user_rut_cliente` (`tipo_user`),
+  KEY `id_user` (`id_user`)
+) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
--- Volcando datos para la tabla newproyect.users: 2 rows
+-- Volcando datos para la tabla newproyect.users: 5 rows
 DELETE FROM `users`;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` (`id_user`, `id`, `name`, `email`, `pass`, `tmp_pass`, `token`, `perfil`, `rol`, `estado`, `foto`, `name_foto`, `pagina_inicio`, `online_fecha`, `fecha_pass`, `tipo_user`) VALUES
-	(1, 1, 'ADMINISTRADOR', 'admin@wys.cl', '$2a$10$e30f46f8a2fbb15c29c3cuyID7m5Az.6bXR8pOlPFFsbxV.LuUuk2', '', '', 'DEFINIDO', 1, 1, 1, '1.jpg', 'portal', 1673733166, '2023-03-14', 'sistema'),
-	(3, 3, 'Jorge Jara', 'newproyect@wys.cl', '$2a$10$e82628d54e7414c749a5aupGjzTmtmBGQir.wQ5xaJrXdQA0.uyx.', '', '', 'definido', 0, 1, 0, NULL, 'portal', 0, '2023-02-28', 'sistema');
+INSERT INTO `users` (`id`, `id_user`, `name`, `email`, `pass`, `tmp_pass`, `token`, `perfil`, `rol`, `estado`, `foto`, `name_foto`, `pagina_inicio`, `online_fecha`, `fecha_pass`, `tipo_user`) VALUES
+	(1, 1, 'ADMINISTRADOR', 'admin@wys.cl', '$2a$10$e1295516478695174eabeusNY5mK7oxjuX4fj3A48apdVAZ.g2/8K', '', '', 'DEFINIDO', 1, 1, 1, '1.jpg', 'portal', 1674961001, '2023-03-29', 'sistema'),
+	(3, 3, 'Jorge Jara', 'newproyect@wys.cl', '$2a$10$7171666f4755257d37b60ugCiarNckcSKn2k9xGzSqVqJA8nwcQ9C', '', '', 'BASICO', 1, 1, 0, NULL, 'portal', 0, '2023-01-28', 'sistema'),
+	(4, 4, 'prueba1', 'prueba@wys.cl', '$2a$10$1e450f04bb98b61a0a741uyjQ.wqxa5k1apZDWg.pH96EZVll4fuO', '', '', 'MEDIO', 1, 1, 0, NULL, 'users/perfiles', 0, '2023-01-27', 'sistema'),
+	(5, 5, 'prueba2', 'prueba2@wys.cl', '$2a$10$83d3b85c8d79f7b493267uHXrxa7NkOwLZ2QBL2kf/LP18RJasjKe', '', '', 'MEDIO', 1, 1, 0, NULL, 'users/perfiles', 0, '2023-01-28', 'sistema'),
+	(6, 6, 'prueba3', 'prueba3@wys.cl', '$2a$10$f8a2292b5b5e82b1b7c8du1hSCrLOqahbEJRlxVZaBMr55ZTk2hEW', NULL, NULL, 'MEDIO', 0, 1, 0, NULL, 'users/usuarios', 0, '2023-01-27', 'sistema');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
-
--- Volcando estructura para disparador newproyect.users_before_insert
-DROP TRIGGER IF EXISTS `users_before_insert`;
-SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_ZERO_IN_DATE,NO_ZERO_DATE,NO_ENGINE_SUBSTITUTION';
-DELIMITER //
-CREATE TRIGGER `users_before_insert` BEFORE INSERT ON `users` FOR EACH ROW BEGIN
- SET NEW.id = NEW.id_user;
-END//
-DELIMITER ;
-SET SQL_MODE=@OLDTMP_SQL_MODE;
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;

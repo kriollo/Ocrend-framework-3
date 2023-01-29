@@ -24,14 +24,13 @@
 {% endblock %}
 {% block appBody %}
     <div class="skewed"></div>
-    <div class="col col-md-12 pt-md-5" id="ppal">
+    <div class="col col-md-12 pt-md-5">
         <ppal></ppal>
     </div>
 {% endblock %}
 {% block appScript %}
     {% if config['build']['production'] %}
-        <script src="assets/jscontrollers/portal/portal_STORE.min.js?{{ date()|date('U') }}"></script>
-        <script src="assets/jscontrollers/portal/portal.min.js?{{ date()|date('U') }}"></script>
+        <script type="module" src="assets/jscontrollers/portal/portal.min.js?{{ date()|date('U') }}"></script>
     {% else %}
         <script type="module" src="assets/jscontrollers/portal/portal.js?{{ date()|date('U') }}"></script>
     {% endif %}

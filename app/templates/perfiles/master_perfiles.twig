@@ -1,0 +1,39 @@
+{% extends 'adminwys/layout' %}
+{% block appStylos %}
+    <link rel="stylesheet" href="assets/vendor/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
+{% endblock %}
+{% block appBody %}
+    <div class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h3 class="m-0 text-dark">Gestión de Perfiles</h3>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="portal">Home</a></li>
+                    <li class="breadcrumb-item"><a href="users">Principal</a></li>
+                    <li class="breadcrumb-item active">Gestión de Perfiles</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /.content-header -->
+
+    <!-- Main content -->
+    <div class="content">
+        <div class="container-fluid">
+            <perfilppal></perfilppal>
+        </div>
+    <!-- /.container-fluid -->
+    </div>
+
+{% endblock %}
+{% block appScript %}
+    {% if config['build']['production'] %}
+        <script type="module" src="assets/jscontrollers/perfiles/perfiles.min.js?{{ date()|date('U') }}"></script>
+    {% else %}
+        <script type="module" src="assets/jscontrollers/perfiles/perfiles.js?{{ date()|date('U') }}"></script>
+    {% endif %}
+{% endblock %}

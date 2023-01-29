@@ -45,37 +45,11 @@ use app\models as Model;
         return $app->json($u->resetpass());   
     });
     $app->post('/getUserByIdPOST', function() use($app) {
-        $u = new Model\Users(); 
-        return $app->json($u->getUserByIdPOST());   
+        $u = new Model\Users();
+        return $app->json($u->getUserByIdPOST());
     });
     $app->post('/update_perfil_usuario', function() use($app) {
         $u = new Model\Users;
         return $app->json($u->update_perfil_usuario());
     });
-    $app->post('/get_data_perfil', function() use($app) {
-        $u = new Model\Adminwys();
-        return $app->json($u->get_data_perfil());
-    });
-    $app->post('/new_perfil', function() use($app) {
-        $u = new Model\Adminwys();
-        return $app->json($u->new_perfil());
-    });
-    $app->post('/update_gest_perfil', function() use($app) {
-        $u = new Model\Adminwys();
-        return $app->json($u->update_gest_perfil());
-    });
-    $app->post('/delete_gest_perfil', function() use($app) {
-        $u = new Model\Adminwys();
-        return $app->json($u->delete_gest_perfil());
-    });
-    $app->post('/get_menu_user_by_POST', function() use($app) {
-        $u = new Model\Adminwys();
-        return $app->json($u->getMenuUserByPOST());
-    });
-//
-// GETS
-
-   $app->post('/getPerfiles', function() use($app) {
-        $u = new Model\Adminwys();
-        return $app->json($u->getPerfiles());
-    });
+    
