@@ -31,7 +31,7 @@ abstract class Controllers {
     /**
       * Obtiene el objeto del template
       *
-      * @var \Twig_Environment
+      * @var \Twig\Environment
     */
     protected $template;
 
@@ -146,7 +146,7 @@ abstract class Controllers {
         }
 
         # Verificar para quién está permitido este controlador
-        $this->knowVisitorPermissions();
+        $this->knowVisitorPermissions($config['build']['url']);
 
         # Auxiliares
         $this->method = $router->getMethod();
@@ -176,12 +176,11 @@ abstract class Controllers {
      *
      * @return void
      */
-    private function valida_pass_vencida() {
-      global $config;
+    private function valida_pass_vencida(string $urlConfig) {
       if ($this->user_resetpass && $this->controllerConfig['valida_pass_vencida']) {
         $urlActual = Helper\Functions::getFullUrl();
-        if($config['build']['url'] . 'portal/perfil_user' != $urlActual) {
-          Helper\Functions::redir($config['build']['url']. 'portal/perfil_user');
+        if($urlConfig . 'portal/perfil_user' != $urlActual) {
+          Helper\Functions::redir($urlConfig. 'portal/perfil_user');
         }
       }
     }
@@ -191,14 +190,10 @@ abstract class Controllers {
      *
      * @return void|bool
      */
-    public function user_logged() {
-        global $config;
-
-        $url = $config['build']['url'];
-
+    public function user_logged(string $urlConfig) {
         if ($this->controllerConfig['users_logged'] && !$this->is_logged) {
           $helperFunction = new Helper\Functions;
-          $helperFunction->redir($url);
+          $helperFunction->redir($urlConfig);
         }
         return $this->is_logged;
     }
@@ -209,7 +204,6 @@ abstract class Controllers {
      * @return void
      */
     private function user_not_logged() {
-
         if ($this->controllerConfig['users_not_logged'] && $this->is_logged) {
           $helperFunction = new Helper\Functions;
           $helperFunction->redir();
@@ -221,41 +215,40 @@ abstract class Controllers {
      *
      * @return void
      */
-    private function acess_only_user_admin() {
-        global $config;
-
+    private function acess_only_user_admin(string $urlConfig) {
         if ($this->controllerConfig['only_admin'] && $this->user['rol'] != 1 ) {
           $helperFunction = new Helper\Functions;
-          $helperFunction->redir($config['build']['url']. 'error?e=404');
+          $helperFunction->redir($urlConfig. 'error?e=404');
         }
     }
+
     /**
      * Acción que regula quién entra o no al controlador según la configuración
      *
      * @return void
      */
-    private function knowVisitorPermissions() {
-        global $config;
-
-        $this->user_logged();
+    private function knowVisitorPermissions(string $urlConfig) {
+        # acceso sólo si usuario está logeado
+        $this->user_logged($urlConfig);
         $this->user_not_logged();
 
         if ($this->is_logged) {
 
-            $this->valida_pass_vencida();
+            $this->valida_pass_vencida($urlConfig);
 
-            $this->acess_only_user_admin();
+            $this->acess_only_user_admin($urlConfig);
 
             # acceso opcion sólo si usuario tiene permiso en perfil
             if ($this->controllerConfig['access_menu'] != false && $this->controllerConfig['access_menu']['valida_acceso']) {
 
                 $menuFound = array_filter($this->menu_user, function ($menu) {
-                    return $menu['id_menu'] === $this->controllerConfig['access_menu']['menu']['id_menu'] && $menu['id_submenu'] === $this->controllerConfig['access_menu']['menu']['id_submenu'];
+                    return $menu['id_menu'] === $this->controllerConfig['access_menu']['menu']['id_menu'] &&
+                           $menu['id_submenu'] === $this->controllerConfig['access_menu']['menu']['id_submenu'];
                 });
 
                 if (is_array($menuFound) && empty($menuFound)) {
                   $helperFunction = new Helper\Functions;
-                  $helperFunction->redir($config['build']['url'] . 'error?e=404');
+                  $helperFunction->redir($urlConfig . 'error?e=404');
                 }
             }
         }

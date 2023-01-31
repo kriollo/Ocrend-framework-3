@@ -36,7 +36,8 @@ class Users extends Models implements IModels {
      *
      * @return void
      */
-    public function __construct(IRouter $router = null) {
+    public function __construct(IRouter $router = null)
+    {
         RedBeanModel::startRedBeanConexion();
 
         parent::__construct($router);
@@ -274,11 +275,11 @@ class Users extends Models implements IModels {
 
     /**
      * Obtiene a todos los usuarios
-     *    
+     *
      * @param string $select : Por defecto es *, se usa para obtener sólo los parámetros necesarios 
      *
      * @return false|array con información de los usuarios
-     */  
+     */
     public function getUsers(string $select = '*',string $filtro = '1=1') {
         Return R::getAll('SELECT ' . $select . ' FROM users WHERE ' . $filtro);
         //return R::findAll('users',$filtro);
@@ -398,10 +399,10 @@ class Users extends Models implements IModels {
 
             // Asigna menu a usuario
             if ('DEFINIDO' != $perfil ){
-                R::exec("DELETE from tbladm_perfilesuser WHERE id_user=?;",[$id_user]);
+                R::exec("DELETE from tbladmperfilesuser WHERE id_user=?;",[$id_user]);
 
-                R::exec("Insert Into tbladm_perfilesuser(id_user,id_menu,id_submenu)
-                select ?,id_menu,id_submenu from tbladm_perfiles where nombre=?;",[$id_user,$perfil]);
+                R::exec("Insert Into tbladmperfilesuser(id_user,id_menu,id_submenu)
+                select ?,id_menu,id_submenu from tbladmperfiles where nombre=?;",[$id_user,$perfil]);
             }
 
             return ['success' => 1, 'title' => 'Maestro de Usuario','message' => 'Registrado con éxito.'];
@@ -440,10 +441,10 @@ class Users extends Models implements IModels {
 
             // Asigna menu a usuario
             if ('DEFINIDO' != $perfil ){
-                R::exec("DELETE from tbladm_perfilesuser WHERE id_user=?;",[$id_user]);
+                R::exec("DELETE from tbladmperfilesuser WHERE id_user=?;",[$id_user]);
 
-                R::exec("Insert Into tbladm_perfilesuser(id_user,id_menu,id_submenu)
-                select ?,id_menu,id_submenu from tbladm_perfiles where nombre=?;",[$id_user,$perfil]);
+                R::exec("Insert Into tbladmperfilesuser(id_user,id_menu,id_submenu)
+                select ?,id_menu,id_submenu from tbladmperfiles where nombre=?;",[$id_user,$perfil]);
             }
 
             return ['success' => 1, 'title' => 'Maestro de Usuario','message' => 'Actualizado con éxito.'];
@@ -586,38 +587,7 @@ class Users extends Models implements IModels {
         // Redireccionar a la página principal del controlador
         Helper\Functions::redir($config['build']['url'] . 'users/usuarios');
     }
-    final public function update_perfil_usuario() {
-        try {
-            global $http;
-
-            $id_user = $http->request->get('id_user');
-
-            R::exec("DELETE FROM tbladm_perfilesuser WHERE id_user='$id_user';");
-
-            $p = (new Model\Adminwys)->getAllMenu();
-            foreach ($p as $value => $data) {
-
-                $a = $http->request->get('check-'.$data['id_menu'].'-'.$data['id_submenu']);
-                if (true == $a){
-                    $id_menu = $data['id_menu'];
-                    $id_submenu = $data['id_submenu'];
-                    $perfil = R::dispense('tbladm_perfilesuser');
-                        $perfil->id_user = $id_user;
-                        $perfil->id_menu = $id_menu;
-                        $perfil->id_submenu = $id_submenu;
-                    R::store($perfil);
-                }
-            }
-
-            $user = R::load('users', $id_user);
-                $user->perfil = 'DEFINIDO';
-            R::store($user);
-
-            return ['success' => 1, 'message' => 'Registrado con éxito.'];
-        } catch (ModelsException $e) {
-            return ['success' => 0, 'message' => $e->getMessage()];
-        }
-    }
+    
     public function updateAvatar(){
         try {
             global $http, $config;
@@ -700,13 +670,91 @@ class Users extends Models implements IModels {
      * Obtiene la fecha de cambio de contraseña
      * @return bool
      */
-    public function validar_cambio_pass($fechapass) {
+    public function validar_cambio_pass($fechapass)
+    {
 
         $dias = Helper\Functions::getDiffDays(date("Y-m-d"),$fechapass);
         if( (int)$dias<= 0){
             return true;
         }else{
             return false;
+        }
+    }
+
+    /**
+     * Obtiene las opciones de menu del usuario
+     * @return array
+     */
+    public function getOpcionesMenu()
+    {
+        global $http;
+        $id_user = $http->request->get('id_user');
+
+        $sql = "SELECT am.descripcion AS menu,glyphicon as icon,asm.id_menu,asm.id_submenu,asm.descripcion,asm.url, if(pu.id_menu IS NULL,0,1) AS checked
+        FROM (tbladmsubmenu as asm INNER JOIN tbladmmenu AS am ON asm.id_menu = am.id_menu)
+        LEFT JOIN tbladmperfilesuser as pu ON asm.id_menu=pu.id_menu AND asm.id_submenu=pu.id_submenu and pu.id_user = {$id_user}
+        ORDER BY asm.id_menu,asm.id_submenu";
+
+        $result = R::getAll($sql);
+
+        if($result != false){
+            $data = [];
+            foreach($result as $item){
+                if(!array_key_exists($item['menu'],$data)){
+                    $data[$item['menu']] = [
+                        'id_menu' => $item['id_menu'],
+                        'menu' => $item['menu'],
+                        'icon' => $item['icon'],
+                        'submenu' => []
+                    ];
+                }
+                $data[$item['menu']]['submenu'][] = [
+                    'id_menu' => $item['id_menu'],
+                    'id_submenu' => $item['id_submenu'],
+                    'descripcion' => $item['descripcion'],
+                    'checked' => $item['checked'] === '1' ? true : false,
+                    'url' => $item['url']
+                ];
+            }
+            return ['result_puro' => $result, 'result_formateado' => $data,];
+        }else
+            return [];
+    }
+
+    /**
+     * Actualiza las opciones del perfil del usuario
+     * @return array
+     */
+    public function updatePerfilUsuario() 
+    {
+        try {
+            global $http;
+
+            $all = $http->request->all();
+            $data = $all['perfil'];
+            $id_user = $all['id_user'];
+
+            R::exec("DELETE FROM tbladmperfilesuser WHERE id_user=?;", [$id_user]);
+
+            foreach($data as $item){
+                foreach($item['submenu'] as $sub){
+                    if($sub['checked'] == true){
+                        $perfil = R::dispense('tbladmperfilesuser');
+                            $perfil->id_user =(int)$id_user;
+                            $perfil->id_menu = (int)$item['id_menu'];
+                            $perfil->id_submenu = (int)$sub['id_submenu'];
+                        R::store($perfil);
+                    }
+                }
+            }
+
+            $user = R::load('users', $id_user);
+                $user->perfil = 'DEFINIDO';
+            R::store($user);
+
+            return ['success' => 1, 'message' => 'Registrado con éxito.'];
+        } catch (ModelsException $e) {
+            return ['success' => 0, 'message' => $e->getMessage()];
         }
     }
 }

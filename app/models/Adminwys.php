@@ -18,27 +18,62 @@ use Ocrend\Kernel\Helpers as Helper;
 use Ocrend\Kernel\Models\Models;
 use Ocrend\Kernel\Models\IModels;
 use Ocrend\Kernel\Models\ModelsException;
-use Ocrend\Kernel\Models\Traits\DBModel;
 use Ocrend\Kernel\Router\IRouter;
+use Ocrend\Kernel\Models\Traits\RedBeanModel;
+use RedBeanPHP\R;
 
 /**
  * Modelo Adminwys
  */
 class Adminwys extends Models implements IModels {
-    use DBModel;
+    use RedBeanModel;
 
+    /**
+     * Constructor de la clase y conexión con RedBeanPHP
+     *
+     * @param IRouter $router: Objeto de enrutamiento
+     *
+     * @return void
+     */
+    public function __construct(IRouter $router = null)
+    {
+        RedBeanModel::startRedBeanConexion();
+
+        parent::__construct($router);
+    }
+
+    /**
+     * Destructor de la clase y cierre de conexión con RedBeanPHP
+     *
+     * @return void
+     */
+    public function __destruct()
+    {
+        RedBeanModel::closeRedBeanConexion();
+    }
+
+    /**
+     * Obtiene los perfiles de la base de datos
+     *
+     * @return array
+     */
     public function getPerfiles(string $select = '*') {
         if ($select == '*') {
-            $perfiles = $this->db->query_select("SELECT nombre,url FROM tbladm_perfiles GROUP BY nombre ORDER BY nombre");
-            if($perfiles != false)
+            $perfiles = R::getAll('SELECT nombre,url FROM tbladmperfiles GROUP BY nombre ORDER BY nombre');
+            if($perfiles != null)
                 return $perfiles;
             else
                 return [];
         }else{
-            $perfiles = $this->db->select($select,'tbladm_perfiles',"",'Limit 1');
-            return $perfiles[0];
+            $perfiles = R::getAll('SELECT { $select } FROM tbladmperfiles limit 1');
+            return $perfiles;
         }
     }
+    /**
+     * Crea un nuevo perfil en la base de datos
+     *
+     * @return array
+     */
     public function new_perfil(){
         try {
             global $http;
@@ -51,17 +86,22 @@ class Adminwys extends Models implements IModels {
                 throw new ModelsException('Todos los datos son necesarios');
             }
             # Registrar perfil
-            $this->db->insert('tbladm_perfiles', [
-                'nombre' => $new_perfil,
-                'id_menu' => 0,
-                'id_submenu' => 0
-            ]);
+            $perfil = R::dispense('tbladmperfiles');
+                $perfil->nombre = $new_perfil;
+                $perfil->id_menu = 0;
+                $perfil->id_submenu = 0;
+            R::store($perfil);
 
             return ['success' => 1,'title' => 'Gestiona Perfil', 'message' => 'Perfil Creado con éxito.'];
         } catch (ModelsException $e) {
             return ['success' => 0,'title' => 'Gestiona Perfil', 'message' => $e->getMessage()];
         }
     }
+    /**
+     * Actualiza el nombre de un perfil de la base de datos
+     *
+     * @return array
+     */
     public function update_perfil() {
         try{
             global $http;
@@ -76,19 +116,20 @@ class Adminwys extends Models implements IModels {
                 throw new ModelsException('Todos los datos son necesarios');
             }
             # Registrar perfil
-            $this->db->update('tbladm_perfiles', [
-                'nombre' => $new_perfil,
-            ],'nombre="'.$old_perfil.'"');
+            R::exec('UPDATE tbladmperfiles SET nombre = ? WHERE nombre = ?', [$new_perfil, $old_perfil]);
 
-            $this->db->update('users', [
-                'perfil' => $new_perfil,
-            ],'perfil="'.$old_perfil.'"');
+            R::exec('UPDATE tbladmperfiles SET nombre = ? WHERE nombre = ?', [$new_perfil, $old_perfil]);
 
             return ['success' => 1,'title' => 'Gestiona Perfil', 'message' => 'Perfil Actualizado con éxito.'];
         } catch (ModelsException $e) {
             return ['success' => 0,'title' => 'Gestiona Perfil', 'message' => $e->getMessage()];
         }
     }
+    /**
+     * Obtiene los perfiles de la base de datos
+     *
+     * @return array
+     */
     public function get_data_perfil(){
         try {
             global $http;
@@ -96,12 +137,12 @@ class Adminwys extends Models implements IModels {
 
 
             $query = "SELECT am.descripcion AS menu,glyphicon as icon,asm.id_menu,asm.id_submenu,asm.descripcion,asm.url, ap.url as url_inicio ,ap.nombre,if(ap.nombre IS NULL,0,1) AS checked
-            FROM (tbladm_submenu as asm INNER JOIN tbladm_menu AS am ON asm.id_menu = am.id_menu)
-            LEFT JOIN tbladm_perfiles as ap ON asm.id_menu=ap.id_menu AND asm.id_submenu=ap.id_submenu and ap.nombre='$perfil'
+            FROM (tbladmsubmenu as asm INNER JOIN tbladmmenu AS am ON asm.id_menu = am.id_menu)
+            LEFT JOIN tbladmperfiles as ap ON asm.id_menu=ap.id_menu AND asm.id_submenu=ap.id_submenu and ap.nombre=?
             ORDER BY asm.id_menu,asm.id_submenu";
-            $result = $this->db->query_select($query);
+            $result = R::getAll($query,[$perfil]);
 
-            if($result != false){
+            if($result != []){
                 $data = [];
                 $url_inicio = 'portal';
                 foreach($result as $item){
@@ -131,6 +172,11 @@ class Adminwys extends Models implements IModels {
             return ['success' => 0,'title' => 'Gestiona Perfil', 'message' => $e->getMessage()];
         }
     }
+    /**
+     * Actualiza los permisos de un perfil
+     *
+     * @return array
+     */
     public function update_gest_perfil(){
         try {
             global $http;
@@ -141,67 +187,76 @@ class Adminwys extends Models implements IModels {
             $url_inicio = $all['url_inicio'];
             $data = $all['data_perfil'];
 
-            $this->db->query("DELETE FROM tbladm_perfiles
-            WHERE nombre='$perfil';");
+            R::exec('DELETE FROM tbladmperfiles WHERE nombre = ?', [$perfil]);
 
             foreach($data as $item){
                 foreach($item['submenu'] as $sub){
                     if($sub['checked'] == true){
-                        $this->db->insert('tbladm_perfiles', [
-                            'nombre' => $perfil,
-                            'id_menu' => $item['id_menu'],
-                            'id_submenu' => $sub['id_submenu'],
-                            'url' => $url_inicio
-                        ]);
+                        $perfildb = R::dispense('tbladmperfiles');
+                            $perfildb->nombre = $perfil;
+                            $perfildb->id_submenu = $sub['id_submenu'];
+                            $perfildb->url = $url_inicio;
+                            $perfildb->id_menu = $item['id_menu'];
+                        R::store($perfildb);
                     }
                 }
             }
 
             //regulariza todos los usuario con actalización de opciones
-            $this->db->query("delete p from (users u inner join tbladm_perfilesuser p on u.id_user=p.id_user )
-            where u.perfil='$perfil';");
-
-            $this->db->query("Insert Into tbladm_perfilesuser(id_user,id_menu,id_submenu)
-            select id_user,id_menu,id_submenu from (tbladm_perfiles p inner join users u on p.nombre=u.perfil ) where p.nombre='$perfil';");
+            R::exec('DELETE FROM tbladmperfilesuser WHERE id_user IN (SELECT id_user FROM users WHERE perfil = ?)', [$perfil]);
+            R::exec("Insert Into tbladmperfilesuser(id_user,id_menu,id_submenu)
+            select id_user,id_menu,id_submenu from (tbladmperfiles p inner join users u on p.nombre=u.perfil ) where p.nombre='$perfil';");
 
             return ['success' => 1,'title' => 'Gestiona Perfil', 'message' => 'Perfil Actualizado con éxito.'];
         } catch (ModelsException $e) {
             return ['success' => 0,'title' => 'Gestiona Perfil', 'message' => $e->getMessage()];
         }
     }
-    public function getIdMenu(string $controller, $metodo ){
-        $url = $controller;
-        $result = $this->db->query_select("SELECT id_menu,id_submenu FROM tbladm_submenu WHERE url LIKE '$url%' limit 1");
+    /**
+     * Obtiene el id del menu y submenu para marcar opcion activa en menu html
+     * @return array
+     */
+    public function getIdMenu(string $controller, string $metodo = null ){
+        global $http;
 
+        $urlAnt = $http->server->get('HTTP_REFERER');
+        $urlAnt = explode("/",$urlAnt);
+        $pos = array_search($controller,$urlAnt);
+        if ($pos !== false) {
+            if (isset($urlAnt[$pos+1])) {
+                $urlAnt = $urlAnt[$pos]."/".$urlAnt[$pos+1];
+            }else{
+                $urlAnt = $urlAnt[$pos];
+            }
+        }
+
+        $url = $controller;
         if($metodo != "" AND $metodo != NULL ){
             $url.= "/".$metodo;
         }
+        $result = R::getRow("SELECT id_menu,id_submenu FROM tbladmsubmenu WHERE url = ?",["$url"]);
+        if($result != null) return $result;
 
-        if($result != false){
-            $result = $result[0];
-            $result2 = $this->db->query_select("SELECT id_submenu FROM tbladm_submenu WHERE url='$url' limit 1");
-        }else{
-            $result2 = $this->db->query_select("SELECT id_menu,id_submenu FROM tbladm_submenu WHERE url='$url' limit 1");
-            $result = [];
-        }
-
-        if ($result2 == false){
-            $result2 = [];
-        }else{
-            $result2 = $result2[0];
-        }
-
-
-        return array_merge($result,$result2);
+        $result2 = R::getRow("SELECT id_menu,id_submenu FROM tbladmsubmenu WHERE url = ?",["$urlAnt"]);
+        return $result2;
     }
+    /**
+     * Obtiene las opciones del menu para el usuario logueado
+     * @param int $id_user
+     * @return array<array>
+     */
     public function getMenuUser($id_user) {
-        return $this->db->query_select("select m.id_menu,m.posi,m.seccion,m.descripcion menu,m.glyphicon,sm.id_submenu,sm.url,sm.descripcion 
-        from (tbladm_perfilesuser pu inner join tbladm_menu m on pu.id_menu=m.id_menu) inner join tbladm_submenu sm on pu.id_menu=sm.id_menu and pu.id_submenu=sm.id_submenu where pu.id_user=$id_user order by m.PosI,sm.PosS");
+        return R::getAll("SELECT m.id_menu,m.posi,m.seccion,m.descripcion menu,m.glyphicon,sm.id_submenu,sm.url,sm.descripcion
+        FROM (tbladmperfilesuser pu INNER JOIN tbladmmenu m ON pu.id_menu=m.id_menu) INNER JOIN tbladmsubmenu sm ON pu.id_menu=sm.id_menu AND pu.id_submenu=sm.id_submenu WHERE pu.id_user=? ORDER BY m.PosI,sm.PosS",[$id_user]);
     }
+    /**
+     * Obtiene todas las opciones activas del sistema
+     * @return array<array>
+     */
     public function getAllMenu() {
-        $result = $this->db->query("SELECT m.id_menu,sm.id_submenu,m.seccion,m.descripcion menu,sm.descripcion,m.glyphicon,sm.url
-        from tbladm_menu m LEFT JOIN tbladm_submenu sm ON m.id_menu=sm.id_menu  AND sm.estado=1 WHERE m.estado = 1 ORDER BY m.posi,sm.poss");
-        return $result->fetch_all(MYSQLI_ASSOC);
+        $result = R::getAll("SELECT m.id_menu,sm.id_submenu,m.seccion,m.descripcion menu,sm.descripcion,m.glyphicon,sm.url
+        from tbladmmenu m LEFT JOIN tbladmsubmenu sm ON m.id_menu=sm.id_menu  AND sm.estado=1 WHERE m.estado = 1 ORDER BY m.posi,sm.poss");
+        return $result;
     }
     public function getMenuUserByPOST(){
         $user = (New Model\Users)->getUserById($this->id_user);
@@ -209,39 +264,5 @@ class Adminwys extends Models implements IModels {
             return $this->getAllMenu();
         else
             return $this->getMenuUser($this->id_user);
-    }
-    public function __construct(IRouter $router = null) {
-        parent::__construct($router);
-        $this->startDBConexion();
-    }
-
-
-    // funciones globales
-    public function ValidarRutCliente($rut){
-
-        $rut = str_replace('.','',$rut);
-        $rut = str_replace('-','',$rut);
-        $rut = str_replace(' ','',$rut);
-        $rut = str_replace('_','',$rut);
-        $rut = strtoupper($rut);
-        //$rut = preg_replace('/[^k0-9]/i', '', $rut);
-        $dv = substr($rut, -1);
-        $numero = substr($rut, 0, strlen($rut) - 1);
-
-        if(!is_numeric($numero)){
-            return false;
-        }
-
-        $result = $this->db->query_select("SELECT digitoverificador('".$numero."') as dv");
-        if($result !== false){
-            if($result[0]['dv'] === $dv){
-                return true;
-            }else{
-                return false;
-            }
-        }else{
-            return false;
-        }
-
     }
 }

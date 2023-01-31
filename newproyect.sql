@@ -16,12 +16,10 @@
 
 
 -- Volcando estructura de base de datos para newproyect
-DROP DATABASE IF EXISTS `newproyect`;
 CREATE DATABASE IF NOT EXISTS `newproyect` /*!40100 DEFAULT CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `newproyect`;
 
 -- Volcando estructura para función newproyect.digitoverificador
-DROP FUNCTION IF EXISTS `digitoverificador`;
 DELIMITER //
 CREATE FUNCTION `digitoverificador`(`rut` INT UNSIGNED) RETURNS varchar(1) CHARSET utf8mb3 COLLATE utf8mb3_unicode_ci
 BEGIN
@@ -64,7 +62,6 @@ END//
 DELIMITER ;
 
 -- Volcando estructura para función newproyect.mes_palabras
-DROP FUNCTION IF EXISTS `mes_palabras`;
 DELIMITER //
 CREATE FUNCTION `mes_palabras`(fecha DATETIME) RETURNS varchar(20) CHARSET utf8mb3 COLLATE utf8mb3_unicode_ci
 BEGIN
@@ -78,9 +75,8 @@ RETURN mes;
 END//
 DELIMITER ;
 
--- Volcando estructura para tabla newproyect.tbladm_menu
-DROP TABLE IF EXISTS `tbladm_menu`;
-CREATE TABLE IF NOT EXISTS `tbladm_menu` (
+-- Volcando estructura para tabla newproyect.tbladmmenu
+CREATE TABLE IF NOT EXISTS `tbladmmenu` (
   `id_menu` int unsigned NOT NULL AUTO_INCREMENT,
   `posi` int unsigned NOT NULL,
   `seccion` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL DEFAULT '0',
@@ -90,65 +86,64 @@ CREATE TABLE IF NOT EXISTS `tbladm_menu` (
   PRIMARY KEY (`id_menu`,`posi`) USING BTREE
 ) ENGINE=MyISAM AUTO_INCREMENT=102 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
--- Volcando datos para la tabla newproyect.tbladm_menu: 2 rows
-DELETE FROM `tbladm_menu`;
-/*!40000 ALTER TABLE `tbladm_menu` DISABLE KEYS */;
-INSERT INTO `tbladm_menu` (`id_menu`, `posi`, `seccion`, `descripcion`, `glyphicon`, `estado`) VALUES
+-- Volcando datos para la tabla newproyect.tbladmmenu: 2 rows
+DELETE FROM `tbladmmenu`;
+/*!40000 ALTER TABLE `tbladmmenu` DISABLE KEYS */;
+INSERT INTO `tbladmmenu` (`id_menu`, `posi`, `seccion`, `descripcion`, `glyphicon`, `estado`) VALUES
 	(99, 9, 'ADMINISTRACION', 'USUARIOS', 'fas fa-users', 1),
 	(1, 1, 'PRUEBA', 'PRUEBA', 'fas fa-save', 1);
-/*!40000 ALTER TABLE `tbladm_menu` ENABLE KEYS */;
+/*!40000 ALTER TABLE `tbladmmenu` ENABLE KEYS */;
 
--- Volcando estructura para tabla newproyect.tbladm_perfiles
-DROP TABLE IF EXISTS `tbladm_perfiles`;
-CREATE TABLE IF NOT EXISTS `tbladm_perfiles` (
+-- Volcando estructura para tabla newproyect.tbladmperfiles
+CREATE TABLE IF NOT EXISTS `tbladmperfiles` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
   `nombre` varchar(35) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
   `id_menu` int NOT NULL DEFAULT '0',
   `id_submenu` int NOT NULL DEFAULT '0',
   `url` varchar(50) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=MyISAM AUTO_INCREMENT=81 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=98 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
--- Volcando datos para la tabla newproyect.tbladm_perfiles: 4 rows
-DELETE FROM `tbladm_perfiles`;
-/*!40000 ALTER TABLE `tbladm_perfiles` DISABLE KEYS */;
-INSERT INTO `tbladm_perfiles` (`id`, `nombre`, `id_menu`, `id_submenu`, `url`) VALUES
-	(80, 'MEDIO', 99, 3, 'users/perfiles'),
-	(79, 'MEDIO', 99, 2, 'users/perfiles'),
-	(78, 'MEDIO', 1, 1, 'users/perfiles'),
-	(57, 'BASICO', 1, 1, 'portal');
-/*!40000 ALTER TABLE `tbladm_perfiles` ENABLE KEYS */;
+-- Volcando datos para la tabla newproyect.tbladmperfiles: 4 rows
+DELETE FROM `tbladmperfiles`;
+/*!40000 ALTER TABLE `tbladmperfiles` DISABLE KEYS */;
+INSERT INTO `tbladmperfiles` (`id`, `nombre`, `id_menu`, `id_submenu`, `url`) VALUES
+	(93, 'PRO', 99, 1, 'users/perfiles'),
+	(97, 'MEDIO', 99, 2, 'users/perfiles'),
+	(96, 'MEDIO', 1, 1, 'users/perfiles'),
+	(57, 'BASICO', 1, 1, 'portal'),
+	(92, 'PRO', 1, 1, 'users/perfiles'),
+	(94, 'PRO', 99, 2, 'users/perfiles'),
+	(95, 'PRO', 99, 3, 'users/perfiles');
+/*!40000 ALTER TABLE `tbladmperfiles` ENABLE KEYS */;
 
--- Volcando estructura para tabla newproyect.tbladm_perfilesuser
-DROP TABLE IF EXISTS `tbladm_perfilesuser`;
-CREATE TABLE IF NOT EXISTS `tbladm_perfilesuser` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `id_user` varchar(50) CHARACTER SET utf8mb3 COLLATE utf8mb3_unicode_ci NOT NULL,
+-- Volcando estructura para tabla newproyect.tbladmperfilesuser
+CREATE TABLE IF NOT EXISTS `tbladmperfilesuser` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `id_user` int NOT NULL DEFAULT '0',
   `id_menu` int unsigned NOT NULL,
   `id_submenu` int unsigned NOT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   KEY `id_user_id_menu_id_submenu` (`id_user`,`id_menu`,`id_submenu`)
-) ENGINE=MyISAM AUTO_INCREMENT=33 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=65 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
--- Volcando datos para la tabla newproyect.tbladm_perfilesuser: 10 rows
-DELETE FROM `tbladm_perfilesuser`;
-/*!40000 ALTER TABLE `tbladm_perfilesuser` DISABLE KEYS */;
-INSERT INTO `tbladm_perfilesuser` (`id`, `id_user`, `id_menu`, `id_submenu`) VALUES
-	(31, '6', 99, 3),
-	(30, '6', 99, 2),
-	(29, '6', 1, 1),
-	(28, '5', 99, 3),
-	(27, '5', 99, 2),
-	(32, '3', 1, 1),
-	(26, '5', 1, 1),
-	(25, '4', 99, 3),
-	(24, '4', 99, 2),
-	(23, '4', 1, 1);
-/*!40000 ALTER TABLE `tbladm_perfilesuser` ENABLE KEYS */;
+-- Volcando datos para la tabla newproyect.tbladmperfilesuser: 7 rows
+DELETE FROM `tbladmperfilesuser`;
+/*!40000 ALTER TABLE `tbladmperfilesuser` DISABLE KEYS */;
+INSERT INTO `tbladmperfilesuser` (`id`, `id_user`, `id_menu`, `id_submenu`) VALUES
+	(64, 4, 1, 1),
+	(52, 3, 99, 2),
+	(63, 6, 1, 1),
+	(62, 4, 99, 2),
+	(61, 6, 99, 2),
+	(50, 3, 1, 1),
+	(51, 3, 99, 1),
+	(54, 5, 1, 1),
+	(53, 3, 99, 3);
+/*!40000 ALTER TABLE `tbladmperfilesuser` ENABLE KEYS */;
 
--- Volcando estructura para tabla newproyect.tbladm_submenu
-DROP TABLE IF EXISTS `tbladm_submenu`;
-CREATE TABLE IF NOT EXISTS `tbladm_submenu` (
+-- Volcando estructura para tabla newproyect.tbladmsubmenu
+CREATE TABLE IF NOT EXISTS `tbladmsubmenu` (
   `id_menu` int unsigned NOT NULL,
   `id_submenu` int unsigned NOT NULL AUTO_INCREMENT,
   `PosS` int unsigned NOT NULL,
@@ -158,18 +153,17 @@ CREATE TABLE IF NOT EXISTS `tbladm_submenu` (
   PRIMARY KEY (`id_menu`,`id_submenu`,`PosS`) USING BTREE
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
--- Volcando datos para la tabla newproyect.tbladm_submenu: 4 rows
-DELETE FROM `tbladm_submenu`;
-/*!40000 ALTER TABLE `tbladm_submenu` DISABLE KEYS */;
-INSERT INTO `tbladm_submenu` (`id_menu`, `id_submenu`, `PosS`, `url`, `descripcion`, `estado`) VALUES
+-- Volcando datos para la tabla newproyect.tbladmsubmenu: 4 rows
+DELETE FROM `tbladmsubmenu`;
+/*!40000 ALTER TABLE `tbladmsubmenu` DISABLE KEYS */;
+INSERT INTO `tbladmsubmenu` (`id_menu`, `id_submenu`, `PosS`, `url`, `descripcion`, `estado`) VALUES
 	(99, 1, 1, 'users', 'Principal', 1),
 	(99, 2, 2, 'users/usuarios', 'Usuarios', 1),
 	(99, 3, 3, 'users/perfiles', 'Gestion de Pefiles', 1),
 	(1, 1, 1, 'prueba', 'Principal', 1);
-/*!40000 ALTER TABLE `tbladm_submenu` ENABLE KEYS */;
+/*!40000 ALTER TABLE `tbladmsubmenu` ENABLE KEYS */;
 
 -- Volcando estructura para tabla newproyect.users
-DROP TABLE IF EXISTS `users`;
 CREATE TABLE IF NOT EXISTS `users` (
   `id` int unsigned NOT NULL AUTO_INCREMENT,
   `id_user` int unsigned DEFAULT NULL,
@@ -196,10 +190,10 @@ CREATE TABLE IF NOT EXISTS `users` (
 DELETE FROM `users`;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
 INSERT INTO `users` (`id`, `id_user`, `name`, `email`, `pass`, `tmp_pass`, `token`, `perfil`, `rol`, `estado`, `foto`, `name_foto`, `pagina_inicio`, `online_fecha`, `fecha_pass`, `tipo_user`) VALUES
-	(1, 1, 'ADMINISTRADOR', 'admin@wys.cl', '$2a$10$e1295516478695174eabeusNY5mK7oxjuX4fj3A48apdVAZ.g2/8K', '', '', 'DEFINIDO', 1, 1, 1, '1.jpg', 'portal', 1674961001, '2023-03-29', 'sistema'),
-	(3, 3, 'Jorge Jara', 'newproyect@wys.cl', '$2a$10$7171666f4755257d37b60ugCiarNckcSKn2k9xGzSqVqJA8nwcQ9C', '', '', 'BASICO', 1, 1, 0, NULL, 'portal', 0, '2023-01-28', 'sistema'),
-	(4, 4, 'prueba1', 'prueba@wys.cl', '$2a$10$1e450f04bb98b61a0a741uyjQ.wqxa5k1apZDWg.pH96EZVll4fuO', '', '', 'MEDIO', 1, 1, 0, NULL, 'users/perfiles', 0, '2023-01-27', 'sistema'),
-	(5, 5, 'prueba2', 'prueba2@wys.cl', '$2a$10$83d3b85c8d79f7b493267uHXrxa7NkOwLZ2QBL2kf/LP18RJasjKe', '', '', 'MEDIO', 1, 1, 0, NULL, 'users/perfiles', 0, '2023-01-28', 'sistema'),
+	(1, 1, 'ADMINISTRADOR', 'admin@wys.cl', '$2a$10$bfd53db74cdae1cdd0471OSBOVacafd9PtPSKcKZp/nwaJooTLLP.', '', '', 'DEFINIDO', 1, 1, 1, '1.jpg', 'portal', 1675189018, '2023-03-31', 'sistema'),
+	(3, 3, 'Jorge Jara', 'newproyect@wys.cl', '$2a$10$8616adde6472ed58e5725eghAVuVG7iTNZBsfCAkuqrn.Khs..2aS', '', '', 'DEFINIDO', 1, 1, 0, NULL, 'portal', 0, '2023-03-31', 'sistema'),
+	(4, 4, 'prueba1', 'prueba@wys.cl', '$2a$10$1e450f04bb98b61a0a741uyjQ.wqxa5k1apZDWg.pH96EZVll4fuO', '', '', 'MEDIO', 1, 1, 0, NULL, 'users/perfiles', 0, '2023-01-30', 'sistema'),
+	(5, 5, 'prueba2', 'prueba2@wys.cl', '$2a$10$2b310b0c836faa240e2d2uT7VSUK9Ezz/OPEFZayBv6V7S7ceIVRi', '', '', 'BASICO', 0, 1, 0, NULL, 'portal', 0, '2023-03-31', 'sistema'),
 	(6, 6, 'prueba3', 'prueba3@wys.cl', '$2a$10$f8a2292b5b5e82b1b7c8du1hSCrLOqahbEJRlxVZaBMr55ZTk2hEW', NULL, NULL, 'MEDIO', 0, 1, 0, NULL, 'users/usuarios', 0, '2023-01-27', 'sistema');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 

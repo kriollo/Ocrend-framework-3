@@ -30,7 +30,6 @@ trait RedBeanModel {
                         $config['database']['drivers']['mysql']['user'],
                         $config['database']['drivers']['mysql']['pass']
                     );
-                    // R::debug(true);
                 }
             break;
             case 'sqlite3':

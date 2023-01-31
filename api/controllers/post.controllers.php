@@ -48,8 +48,11 @@ use app\models as Model;
         $u = new Model\Users();
         return $app->json($u->getUserByIdPOST());
     });
-    $app->post('/update_perfil_usuario', function() use($app) {
+    $app->post('/updatePerfilUsuario', function() use($app) {
         $u = new Model\Users;
-        return $app->json($u->update_perfil_usuario());
+        return $app->json($u->updatePerfilUsuario());
     });
-    
+    $app->post('/getPerfilUser', function() use($app) {
+        $u = new Model\Users;
+        return $app->json($u->getOpcionesMenu());
+    });

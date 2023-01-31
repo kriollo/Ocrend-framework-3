@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 
 use app\models as Model;
+
 $app->post('/getPerfiles', function() use($app) {
     $u = new Model\Adminwys();
     return $app->json($u->getPerfiles());
@@ -31,7 +32,6 @@ $app->post('/update_gest_perfil', function() use($app) {
     $u = new Model\Adminwys();
     return $app->json($u->update_gest_perfil());
 });
-
 $app->post('/get_menu_user_by_POST', function() use($app) {
     $u = new Model\Adminwys();
     return $app->json($u->getMenuUserByPOST());

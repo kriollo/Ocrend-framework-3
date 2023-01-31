@@ -196,7 +196,7 @@ app.component('opcionesmenu', {
                     },1000);
                 } else {
                     $(document).Toasts('create', {
-                        class: 'bg-warning', 
+                        class: 'bg-warning',
                         title: 'Alerta',
                         subtitle: json.title,
                         body: json.message,

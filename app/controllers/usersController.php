@@ -25,7 +25,7 @@ use Ocrend\Kernel\Router\IRouter;
 class usersController extends Controllers implements IControllers {
 
     public function __construct(IRouter $router) {
-        global $config;
+        global $config, $http;
         $op = (new Model\Adminwys)->getIdMenu($router->getController(),$router->getMethod());
         parent::__construct($router,[
             'users_logged' => true,
@@ -53,7 +53,7 @@ class usersController extends Controllers implements IControllers {
                 ]);
             break;
             case 'update_user':
-                if($this->isset_id and false !== ($data = $u->getUserById($router->getId(true)))) {
+                if($this->isset_id and (false !== $u->getUserById($router->getId(true)))) {
                     $this->template->display('users/master_user', [
                         'menu_op' => $op,
                         'id_user' => $router->getId(true)
@@ -66,12 +66,10 @@ class usersController extends Controllers implements IControllers {
                 $u->update_estado_user();
             break;
             case 'editar_perfil_user':
-                if($this->isset_id and false !== ($data = $u->getUserById($router->getId(true)))) {
+                if($this->isset_id and (false !== $u->getUserById($router->getId(true)))) {
                     $this->template->display('users/update_perfil_user', [
                         'menu_op' => $op,
-                        'db_users' => $data,
-                        'db_all_menu' => (new Model\Adminwys)->getAllMenu(),
-                        'db_menu_user' => (new Model\Adminwys)->getMenuUser($data['id_user'])
+                        'id_user' => $router->getId(true)
                     ]);
                 } else {
                     Helper\Functions::redir($config['build']['url'] . 'users/&error=true');
