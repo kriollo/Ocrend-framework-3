@@ -25,7 +25,7 @@ use Ocrend\Kernel\Router\IRouter;
 class usersController extends Controllers implements IControllers {
 
     public function __construct(IRouter $router) {
-        global $config, $http;
+        global $config;
         $op = (new Model\Adminwys)->getIdMenu($router->getController(),$router->getMethod());
         parent::__construct($router,[
             'users_logged' => true,

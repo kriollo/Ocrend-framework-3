@@ -31,7 +31,7 @@ class Adminwys extends Models implements IModels {
     /**
      * Constructor de la clase y conexión con RedBeanPHP
      *
-     * @param IRouter $router: Objeto de enrutamiento
+     * @param IRouter: Objeto de enrutamiento
      *
      * @return void
      */
@@ -60,10 +60,7 @@ class Adminwys extends Models implements IModels {
     public function getPerfiles(string $select = '*') {
         if ($select == '*') {
             $perfiles = R::getAll('SELECT nombre,url FROM tbladmperfiles GROUP BY nombre ORDER BY nombre');
-            if($perfiles != null)
-                return $perfiles;
-            else
-                return [];
+            return $perfiles;
         }else{
             $perfiles = R::getAll('SELECT { $select } FROM tbladmperfiles limit 1');
             return $perfiles;
@@ -165,8 +162,8 @@ class Adminwys extends Models implements IModels {
                         $url_inicio = $item['url_inicio'];
                 }
                 return ['result_puro' => $result, 'result_formateado' => $data, 'url_inicio' => $url_inicio];
-            }else
-                return [];
+            }
+            return [];
 
         } catch (ModelsException $e) {
             return ['success' => 0,'title' => 'Gestiona Perfil', 'message' => $e->getMessage()];

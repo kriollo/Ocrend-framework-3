@@ -180,7 +180,8 @@ abstract class Controllers {
       if ($this->user_resetpass && $this->controllerConfig['valida_pass_vencida']) {
         $urlActual = Helper\Functions::getFullUrl();
         if($urlConfig . 'portal/perfil_user' != $urlActual) {
-          Helper\Functions::redir($urlConfig. 'portal/perfil_user');
+          $helperFunction = new Helper\Functions;
+          $helperFunction->redir($urlConfig. 'portal/perfil_user');
         }
       }
     }

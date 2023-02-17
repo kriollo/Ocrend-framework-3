@@ -41,7 +41,7 @@ twig:
 # Configuración del sitio
 build:
   production: false
-  name: VSERV APP
+  name: ADMIN APP
   url: http://newproject/
   timezone: America/Santiago
   version: 3.2.1
