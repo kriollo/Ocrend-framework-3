@@ -249,7 +249,9 @@ abstract class Controllers {
 
                 if (is_array($menuFound) && empty($menuFound)) {
                   $helperFunction = new Helper\Functions;
-                  $helperFunction->redir($urlConfig . 'error?e=404');
+                  if($this->controllerConfig['access_menu']['menu']['id_menu'] != 0 && $this->controllerConfig['access_menu']['menu']['id_submenu'] != 0) {
+                    $helperFunction->redir($urlConfig . 'error?e=404');
+                  }
                 }
             }
         }
