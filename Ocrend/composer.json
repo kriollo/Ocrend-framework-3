@@ -1,6 +1,6 @@
 {
     "require": {
-        "twig/twig": "^2.15.4",
+        "twig/twig": "^3.11.2",
         "symfony/yaml": "^3.4.17",
         "symfony/http-foundation": "^3.4.47",
         "silex/silex": "~2.2.4",
